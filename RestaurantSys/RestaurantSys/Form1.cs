@@ -32,6 +32,7 @@ namespace RestaurantSys
 
         private void AddButton_Click(object sender, EventArgs e)
         {
+            AdopenFileDialog.InitialDirectory = System.IO.Path.Combine(Application.StartupPath, @"");
             if (AdopenFileDialog.ShowDialog() == DialogResult.OK)
                 AdListBox.Items.Add(AdopenFileDialog.FileName);
         }
