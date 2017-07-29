@@ -14,20 +14,17 @@ using Emgu.CV.UI;
 using Emgu.CV.Structure;
 #endregion
 
+using System.Net.Http;
+
 namespace RestaurantSys
 {
     public partial class Form1 : Form
     {
+        private static readonly HttpClient client = new HttpClient();
+
         public Form1()
         {
             InitializeComponent();
-        }
-
-        public class Global
-        {
-            public static bool bPlayingVideo = false;
-            public static Capture AdFrameGrabber;
-            public static int AdtimerIntervalBuffer = 0;
         }
 
         private void AddButton_Click(object sender, EventArgs e)
@@ -60,9 +57,7 @@ namespace RestaurantSys
 
                     int IsVedeo = AdRotator.ImageLocation.IndexOf(".avi");
                     if (IsVedeo >= 0)
-                    {
-                        // 遇到影片 必須改變 timer1.Interval 為 1/fps 並且停止更新 AdListBox.SelectedIndex 直到影片播完
-
+                    {   // 遇到影片 必須改變 timer1.Interval 為 1/fps 並且停止更新 AdListBox.SelectedIndex 直到影片播完
 
                         Global.AdFrameGrabber = new Capture(AdRotator.ImageLocation);
 
@@ -128,5 +123,21 @@ namespace RestaurantSys
                 AdIntervalText.Visible = true;
             }
         }
+
+        private void OrderButton_Click(object sender, EventArgs e)
+        {
+            Form2 frm = new Form2();
+            // frm.Show();
+
+            //設定Form2為Form1的上層，並開啟Form2視窗。由於在Form1的程式碼內使用this，所以this為Form1的物件本身
+            frm.ShowDialog(this);
+        }
+    }
+
+    public class Global
+    {   // 這裡擺放全域變數以供表單間溝通或是static變數需求
+        public static bool bPlayingVideo = false;
+        public static Capture AdFrameGrabber;
+        public static int AdtimerIntervalBuffer = 0;
     }
 }

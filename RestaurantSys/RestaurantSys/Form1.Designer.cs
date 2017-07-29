@@ -116,6 +116,7 @@
             this.OrderButton.TabIndex = 6;
             this.OrderButton.Text = "Order";
             this.OrderButton.UseVisualStyleBackColor = true;
+            this.OrderButton.Click += new System.EventHandler(this.OrderButton_Click);
             // 
             // Form1
             // 
@@ -130,7 +131,7 @@
             this.Controls.Add(this.AdListBox);
             this.Controls.Add(this.AdRotator);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "RealTouch Restaurant System";
             ((System.ComponentModel.ISupportInitialize)(this.AdRotator)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
