@@ -237,19 +237,24 @@ namespace RestaurantSys
 
         private void LogIn_HttpWebRequest_Click(object sender, EventArgs e)
         {
-            string POST = "http://dev.realtouchapp.com/api/v1/windows/zh-Hant/login";
-            string system = "realtouchapp";
-            string account = "ismyaki@gmail.com";
-            string password = "123456";
+            //string POST = "http://dev.realtouchapp.com/api/v1/windows/zh-Hant/login";
+            //string system = "realtouchapp";
+            //string account = "ismyaki@gmail.com";
+            //string password = "123456";
 
-            var postData = "system=";
-            postData += system + "&";
-            postData += "account=";
-            postData += account + "&";
-            postData += "password=";
-            postData += password;
+            //var postData = "system=";
+            //postData += system + "&";
+            //postData += "account=";
+            //postData += account + "&";
+            //postData += "password=";
+            //postData += password;
 
+            //string PostResult = POST_GrapInfo(POST, postData);
+
+            string POST = SetURL(POST_DATA_TYPE.LOGIN);
+            string postData = SetPostData(POST_DATA_TYPE.LOGIN);
             string PostResult = POST_GrapInfo(POST, postData);
+
             MessageBox.Show(PostResult);
 
             var JasonString = JsonConvert.DeserializeObject(PostResult);
@@ -335,17 +340,127 @@ namespace RestaurantSys
             MessageBox.Show("organizerNO = " + ((Button)sender).Name);
         }
 
+        public enum POST_DATA_TYPE
+        {
+            LOGIN = 0,
+            ORGANIZER_NO = 1,
+            NEW_LIST = 2,
+            NEW_CONTENT = 3,
+            CATEGORY = 4,
+            PRODUCT = 5
+        }
 
         public class Global
         {   // 這裡擺放全域變數以供表單間溝通或是static變數需求
             public static bool bPlayingVideo = false;
             public static Capture AdFrameGrabber;
             public static int AdtimerIntervalBuffer = 0;
+
+            // by user input
+            public static string System = "realtouchapp";
+            public static string Account = "ismyaki@gmail.com";
+            public static string Password = "123456";
+
+            // by Web
             public static string MainSessionID = "";
             public static string organizerNO = "";
             public static string systemID = "";
-            public const string ADKEYWORD = "ADEBOARD";
 
+            // const
+            public const string ADKEYWORD = "ADEBOARD";
+            public const string URL_LogIn = "http://dev.realtouchapp.com/api/v1/windows/zh-Hant/login";
+            public const string URL_OrganizerNO = "http://dev.realtouchapp.com/api/v1/windows/zh-Hant/realtouch/getName";
+            public const string URL_NewsList = "http://dev.realtouchapp.com/api/business/v1/windows/zh-Hant/info/news/system";
+            public const string URL_NewsContent = "http://dev.realtouchapp.com/api/business/v1/windows/zh-Hant/info/news/list";
+            public const string URL_CategoryList = "http://dev.realtouchapp.com/api/business/v1/windows/zh-Hant/product/category/list";
+            public const string URL_ProductList = "http://dev.realtouchapp.com/api/business/v1/windows/zh-Hant/product/product/list";
+
+        }
+
+        private string SetURL(POST_DATA_TYPE a_Type)
+        {
+            string URL = "";
+
+            switch (a_Type)
+            {
+                case POST_DATA_TYPE.LOGIN:
+                    URL = Global.URL_LogIn;
+                    break;
+                case POST_DATA_TYPE.ORGANIZER_NO:
+                    URL = Global.URL_OrganizerNO;
+                    break;
+                case POST_DATA_TYPE.NEW_LIST:
+                    URL = Global.URL_NewsList;
+                    break;
+                case POST_DATA_TYPE.NEW_CONTENT:
+                    URL = Global.URL_NewsContent;
+                    break;
+                case POST_DATA_TYPE.CATEGORY:
+                    URL = Global.URL_CategoryList;
+                    break;
+                case POST_DATA_TYPE.PRODUCT:
+                    URL = Global.URL_ProductList;
+                    break;
+                default:
+                    Console.WriteLine("Default case");
+                    break;
+            }
+
+            return URL;
+        }
+
+        private string SetPostData(POST_DATA_TYPE a_Type)
+        {
+            string postData = "";
+            
+            switch (a_Type)
+            {
+                case POST_DATA_TYPE.LOGIN:
+                    postData += "system=";
+                    postData += Global.System + "&";
+                    postData += "account=";
+                    postData += Global.Account + "&";
+                    postData += "password=";
+                    postData += Global.Password;
+                    break;
+                case POST_DATA_TYPE.ORGANIZER_NO:
+                    postData += "sessionID=";
+                    postData += Global.MainSessionID + "&";
+                    postData += "system=";
+                    postData += Global.System;
+                    break;
+                case POST_DATA_TYPE.NEW_LIST:
+                    postData += "sessionID=";
+                    postData += Global.MainSessionID + "&";
+                    postData += "organizerNO=";
+                    postData += Global.organizerNO;
+                    break;
+                case POST_DATA_TYPE.NEW_CONTENT:
+                    postData += "sessionID=";
+                    postData += Global.MainSessionID + "&";
+                    postData += "organizerNO=";
+                    postData += Global.organizerNO + "&";
+                    postData += "systemID=";
+                    postData += Global.systemID;
+                    break;
+                case POST_DATA_TYPE.CATEGORY:
+                    postData += "sessionID=";
+                    postData += Global.MainSessionID + "&";
+                    postData += "organizerNO=";
+                    postData += Global.organizerNO;
+                    break;
+                case POST_DATA_TYPE.PRODUCT:
+                    postData += "sessionID=";
+                    postData += Global.MainSessionID + "&";
+                    postData += "organizerNO=";
+                    postData += Global.organizerNO;
+                    break;
+                default:
+                    Console.WriteLine("Default case");
+                    break;
+            }
+
+            return postData;
         }
 
         private void NewsListButton_Click(object sender, EventArgs e)
