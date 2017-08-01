@@ -222,7 +222,7 @@ namespace RestaurantSys
                 string sessionID = json.sessionID;
                 Global.MainSessionID = sessionID;
 
-                // var results = JObject.Parse(json).SelectToken("results") as JArray;
+                
 
             }
             else
@@ -276,6 +276,48 @@ namespace RestaurantSys
 
             var JasonString = JsonConvert.DeserializeObject(PostResult);
             MessageBox.Show(JasonString.ToString());
+
+            #region With_List
+            var JList = JObject.Parse(JasonString.ToString()).SelectToken("shopInfo").ToList();
+            long cnt_JList = JList.LongCount();
+
+            // 產生新表單給使用者選shop
+            Form frm = new Form();
+            int m_btnWidth = 100;
+            int m_btnHeight = 40;
+            for (int cnt =0;cnt < cnt_JList; cnt++)
+            {
+                var JItem = JList[cnt];
+                var organizerNO_tmp = JItem.SelectToken("organizerNO");
+                var name_tmp = JItem.SelectToken("name");
+
+                Button btn = new Button();
+                frm.AcceptButton = btn;
+                frm.Controls.Add(btn);
+                btn.Left = m_btnWidth * cnt;
+                btn.Top = 0;
+                btn.Width = m_btnWidth;
+                btn.Height = m_btnHeight;
+
+                btn.Text = name_tmp.ToString();
+            }
+            frm.Show();
+            #endregion
+
+
+
+            #region With_JArray
+            //var albums = JObject.Parse(JasonString.ToString()).SelectToken("shopInfo") as JArray;
+            //long cnt_JArray = albums.LongCount();
+            //foreach (dynamic album in albums)
+            //{
+            //    Console.WriteLine(album.organizerNO);
+            //    //foreach (dynamic song in album.Songs)
+            //    //{
+            //    //    Console.WriteLine("\t" + song.SongName);
+            //    //}
+            //}
+            #endregion
         }
     }
 

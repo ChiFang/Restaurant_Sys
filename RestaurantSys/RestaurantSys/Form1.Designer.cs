@@ -39,9 +39,9 @@
             this.SetButton = new System.Windows.Forms.Button();
             this.OrderButton = new System.Windows.Forms.Button();
             this.TestPanel = new System.Windows.Forms.Panel();
+            this.organizerNO_Button = new System.Windows.Forms.Button();
             this.LogIn_HttpWebRequest = new System.Windows.Forms.Button();
             this.LogInButton = new System.Windows.Forms.Button();
-            this.organizerNO_Button = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.AdRotator)).BeginInit();
             this.TestPanel.SuspendLayout();
             this.SuspendLayout();
@@ -138,6 +138,16 @@
             this.TestPanel.Size = new System.Drawing.Size(200, 341);
             this.TestPanel.TabIndex = 7;
             // 
+            // organizerNO_Button
+            // 
+            this.organizerNO_Button.Location = new System.Drawing.Point(36, 214);
+            this.organizerNO_Button.Name = "organizerNO_Button";
+            this.organizerNO_Button.Size = new System.Drawing.Size(75, 23);
+            this.organizerNO_Button.TabIndex = 9;
+            this.organizerNO_Button.Text = "organizerNO";
+            this.organizerNO_Button.UseVisualStyleBackColor = true;
+            this.organizerNO_Button.Click += new System.EventHandler(this.organizerNO_Button_Click);
+            // 
             // LogIn_HttpWebRequest
             // 
             this.LogIn_HttpWebRequest.Location = new System.Drawing.Point(117, 185);
@@ -158,16 +168,6 @@
             this.LogInButton.UseVisualStyleBackColor = true;
             this.LogInButton.Click += new System.EventHandler(this.LogInButton_ClickAsync);
             // 
-            // organizerNO_Button
-            // 
-            this.organizerNO_Button.Location = new System.Drawing.Point(36, 214);
-            this.organizerNO_Button.Name = "organizerNO_Button";
-            this.organizerNO_Button.Size = new System.Drawing.Size(75, 23);
-            this.organizerNO_Button.TabIndex = 9;
-            this.organizerNO_Button.Text = "organizerNO";
-            this.organizerNO_Button.UseVisualStyleBackColor = true;
-            this.organizerNO_Button.Click += new System.EventHandler(this.organizerNO_Button_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -177,7 +177,7 @@
             this.Controls.Add(this.OrderButton);
             this.Controls.Add(this.AdRotator);
             this.Name = "Form1";
-            this.Text = "2";
+            this.Text = "Realtouch Restaurant System";
             ((System.ComponentModel.ISupportInitialize)(this.AdRotator)).EndInit();
             this.TestPanel.ResumeLayout(false);
             this.TestPanel.PerformLayout();
