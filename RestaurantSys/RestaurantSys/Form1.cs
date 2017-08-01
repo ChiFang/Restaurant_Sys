@@ -20,6 +20,9 @@ using System.Collections.Specialized;
 
 using System.IO;
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 namespace RestaurantSys
 {
     public partial class Form1 : Form
@@ -129,6 +132,28 @@ namespace RestaurantSys
             frm.ShowDialog(this);
         }
 
+        private string POST_GrapInfoAsync(string a_URL, Dictionary<string, string> a_Params)
+        {
+            string Result = "";
+            var content = new FormUrlEncodedContent(a_Params);
+            var response =  client.PostAsync(a_URL, content);
+            var StatusCodeString = response.StatusCode.ToString();
+            var StatusCode = response.StatusCode.GetHashCode();
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {   // 成功才開始後續動作
+                var responseString = response.Content.ReadAsStringAsync().Result;
+                Result = responseString;
+            }
+            else
+            {   // 可編寫錯誤動作
+                Result = "ERROR";
+            }
+
+            return Result;
+        }
+
+
         private async void LogInButton_ClickAsync(object sender, EventArgs e)
         {
             string POST = "http://dev.realtouchapp.com/api/v1/windows/zh-Hant/login";
@@ -152,67 +177,28 @@ namespace RestaurantSys
             var StatusCodeString = response.StatusCode.ToString();
             var StatusCode = response.StatusCode.GetHashCode();
 
-
-            if(response.StatusCode == HttpStatusCode.OK)
+            if (response.StatusCode == HttpStatusCode.OK)
             {   // 成功才開始後續動作
                 var responseString = response.Content.ReadAsStringAsync().Result;
+                var JasonString = JsonConvert.DeserializeObject(responseString);
 
                 MessageBox.Show(responseString);
+                MessageBox.Show(JasonString.ToString());
+
+                dynamic json = JValue.Parse(JasonString.ToString());
+
+                // values require casting
+                string name = json.name;
+                string sessionID = json.sessionID;
 
                 // var results = JObject.Parse(json).SelectToken("results") as JArray;
+
             }
             else
             {   // 可編寫錯誤動作
 
             }
-
-
-
-
-
             #endregion
-
-
-            #region WebClient
-            // Available in: .NET Framework 1.1+, .NET Standard 2.0+, .NET Core 2.0+ 
-
-            //using (var wb = new WebClient())
-            //{
-            //    var data = new NameValueCollection();
-            //    data["system"] = system;
-            //    data["account"] = account;
-            //    data["password"] = password;
-
-            //    var response = wb.UploadValues(POST, "POST", data);
-
-
-            //    MessageBox.Show(Encoding.UTF8.GetString(response));
-            //}
-            #endregion
-
-            #region WebClient
-            //var request = (HttpWebRequest)WebRequest.Create("http://www.example.com/recepticle.aspx");
-
-            //var postData = "thing1=hello";
-            //postData += "&thing2=world";
-            //var data = Encoding.ASCII.GetBytes(postData);
-
-            //request.Method = "POST";
-            //request.ContentType = "application/x-www-form-urlencoded";
-            //request.ContentLength = data.Length;
-
-            //using (var stream = request.GetRequestStream())
-            //{
-            //    stream.Write(data, 0, data.Length);
-            //}
-
-            //var response = (HttpWebResponse)request.GetResponse();
-
-            //var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
-            #endregion
-
-
-
         }
     }
 
