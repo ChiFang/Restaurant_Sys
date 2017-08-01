@@ -23,6 +23,8 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+
+
 namespace RestaurantSys
 {
     public partial class Form1 : Form
@@ -75,7 +77,7 @@ namespace RestaurantSys
                         double FrameNum = Global.AdFrameGrabber.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameCount);
 
                         Global.AdtimerIntervalBuffer = Adtimer.Interval;
-                        int NewInterval = (int)(1000/rate);
+                        int NewInterval = (int)(1000 / rate);
                         Adtimer.Interval = NewInterval;
 
                         Global.bPlayingVideo = true;
@@ -146,37 +148,37 @@ namespace RestaurantSys
 
             // Get the request stream.
             Stream dataStream = request.GetRequestStream();
-            
+
             // Write the data to the request stream.
             dataStream.Write(byteArray, 0, byteArray.Length);
-            
+
             // Close the Stream object.
             dataStream.Close();
 
             // Get the response.
             WebResponse response = request.GetResponse();
-            
+
             // Display the status.
             // Console.WriteLine(((HttpWebResponse)response).StatusDescription);
-            
+
             // Get the stream containing content returned by the server.
             dataStream = response.GetResponseStream();
-            
+
             // Open the stream using a StreamReader for easy access.
             StreamReader reader = new StreamReader(dataStream);
-            
+
             // Read the content.
             string responseFromServer = reader.ReadToEnd();
-            
+
             // Display the content.
             // Console.WriteLine(responseFromServer);
-            
+
             // Clean up the streams.
             reader.Close();
             dataStream.Close();
             response.Close();
 
-            if(((HttpWebResponse)response).StatusCode == HttpStatusCode.OK)
+            if (((HttpWebResponse)response).StatusCode == HttpStatusCode.OK)
             {   // 表示擷取成功 回傳200
                 Result = responseFromServer;
             }
@@ -222,7 +224,7 @@ namespace RestaurantSys
                 string sessionID = json.sessionID;
                 Global.MainSessionID = sessionID;
 
-                
+
 
             }
             else
@@ -285,26 +287,32 @@ namespace RestaurantSys
             Form frm = new Form();
             int m_btnWidth = 100;
             int m_btnHeight = 40;
-            for (int cnt =0;cnt < cnt_JList; cnt++)
+            for (int cnt = 0; cnt < cnt_JList; cnt++)
             {
                 var JItem = JList[cnt];
                 var organizerNO_tmp = JItem.SelectToken("organizerNO");
                 var name_tmp = JItem.SelectToken("name");
 
                 Button btn = new Button();
+
+                //Panel panelTmp = new Panel();
+                //frm.Controls.Add(panelTmp);
+
                 frm.AcceptButton = btn;
                 frm.Controls.Add(btn);
+
                 btn.Left = m_btnWidth * cnt;
                 btn.Top = 0;
                 btn.Width = m_btnWidth;
                 btn.Height = m_btnHeight;
 
                 btn.Text = name_tmp.ToString();
+                btn.Name = organizerNO_tmp.ToString();
+
+                btn.Click += new EventHandler(organizerNO_Selcet);
             }
             frm.Show();
             #endregion
-
-
 
             #region With_JArray
             //var albums = JObject.Parse(JasonString.ToString()).SelectToken("shopInfo") as JArray;
@@ -319,14 +327,93 @@ namespace RestaurantSys
             //}
             #endregion
         }
-    }
 
-    public class Global
-    {   // 這裡擺放全域變數以供表單間溝通或是static變數需求
-        public static bool bPlayingVideo = false;
-        public static Capture AdFrameGrabber;
-        public static int AdtimerIntervalBuffer = 0;
-        public static string MainSessionID = "";
-        public static string organizerNO = "";
+        private void organizerNO_Selcet(object sender, EventArgs e)
+        {
+            Global.organizerNO = ((Button)sender).Name;
+            // this.Close();
+            MessageBox.Show("organizerNO = " + ((Button)sender).Name);
+        }
+
+
+        public class Global
+        {   // 這裡擺放全域變數以供表單間溝通或是static變數需求
+            public static bool bPlayingVideo = false;
+            public static Capture AdFrameGrabber;
+            public static int AdtimerIntervalBuffer = 0;
+            public static string MainSessionID = "";
+            public static string organizerNO = "";
+            public static string systemID = "";
+            public const string ADKEYWORD = "ADEBOARD";
+
+        }
+
+        private void NewsListButton_Click(object sender, EventArgs e)
+        {
+            string POST = "http://dev.realtouchapp.com/api/business/v1/windows/zh-Hant/info/news/system";
+
+            var postData = "organizerNO=";
+            postData += Global.organizerNO;
+
+            string PostResult = POST_GrapInfo(POST, postData);
+            MessageBox.Show(PostResult);
+
+            var JasonString = JsonConvert.DeserializeObject(PostResult);
+            MessageBox.Show(JasonString.ToString());
+
+            #region With_List
+            var JList = JObject.Parse(JasonString.ToString()).SelectToken("system").ToList();
+            long cnt_JList = JList.LongCount();
+
+            // 尋找keyword = "ADEBOARD" 的輪播 systemID
+            for (int cnt = 0; cnt < cnt_JList; cnt++)
+            {
+                var JItem = JList[cnt];
+                var Keyword_tmp = JItem.SelectToken("keyword");
+
+                if (Keyword_tmp.ToString() == Global.ADKEYWORD)
+                {
+                    Global.systemID = JItem.SelectToken("systemID").ToString();
+                }
+   
+            }
+            #endregion
+        }
+
+        private void NewsContentButton_Click(object sender, EventArgs e)
+        {
+            string POST = "http://dev.realtouchapp.com/api/business/v1/windows/zh-Hant/info/news/list";
+
+
+            var postData = "sessionID=";
+            postData += Global.MainSessionID + "&";
+            postData += "organizerNO=";
+            postData += Global.organizerNO + "&";
+            postData += "systemID=";
+            postData += Global.systemID;
+
+            string PostResult = POST_GrapInfo(POST, postData);
+            MessageBox.Show(PostResult);
+
+            var JasonString = JsonConvert.DeserializeObject(PostResult);
+            MessageBox.Show(JasonString.ToString());
+
+            #region With_List
+            //var JList = JObject.Parse(JasonString.ToString()).SelectToken("system").ToList();
+            //long cnt_JList = JList.LongCount();
+
+            //// 尋找keyword = "ADEBOARD" 的輪播 systemID
+            //for (int cnt = 0; cnt < cnt_JList; cnt++)
+            //{
+            //    var JItem = JList[cnt];
+            //    var Keyword_tmp = JItem.SelectToken("keyword");
+
+            //    if (Keyword_tmp.ToString() == Global.ADKEYWORD)
+            //    {
+            //        Global.systemID = JItem.SelectToken("systemID").ToString();
+            //    }
+            //}
+            #endregion
+        }
     }
 }
