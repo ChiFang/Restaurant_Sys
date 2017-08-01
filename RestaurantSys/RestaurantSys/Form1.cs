@@ -15,6 +15,10 @@ using Emgu.CV.Structure;
 #endregion
 
 using System.Net.Http;
+using System.Net;
+using System.Collections.Specialized;
+
+using System.IO;
 
 namespace RestaurantSys
 {
@@ -106,21 +110,13 @@ namespace RestaurantSys
 
         private void AdRotator_Click(object sender, EventArgs e)
         {
-            if (AdListBox.Visible)
+            if (TestPanel.Visible)
             {
-                AdListBox.Visible = false;
-                AddButton.Visible = false;
-                RemoveButton.Visible = false;
-                SetButton.Visible = false;
-                AdIntervalText.Visible = false;
+                TestPanel.Visible = false;
             }
             else
             {
-                AdListBox.Visible = true;
-                AddButton.Visible = true;
-                RemoveButton.Visible = true;
-                SetButton.Visible = true;
-                AdIntervalText.Visible = true;
+                TestPanel.Visible = true;
             }
         }
 
@@ -132,6 +128,92 @@ namespace RestaurantSys
             //設定Form2為Form1的上層，並開啟Form2視窗。由於在Form1的程式碼內使用this，所以this為Form1的物件本身
             frm.ShowDialog(this);
         }
+
+        private async void LogInButton_ClickAsync(object sender, EventArgs e)
+        {
+            string POST = "http://dev.realtouchapp.com/api/v1/windows/zh-Hant/login";
+            string system = "realtouchapp";
+            string account = "ismyaki@gmail.com";
+            string password = "123456";
+            // string password = "123";
+
+            #region HttpClient
+            // Available in: .NET Framework 4.5+, .NET Standard 1.1+, .NET Core 1.0+
+
+            var values = new Dictionary<string, string>
+            {
+               { "system", system },
+               { "account", account },
+                { "password", password }
+            };
+
+            var content = new FormUrlEncodedContent(values);
+            var response = await client.PostAsync(POST, content);
+            var StatusCodeString = response.StatusCode.ToString();
+            var StatusCode = response.StatusCode.GetHashCode();
+
+
+            if(response.StatusCode == HttpStatusCode.OK)
+            {   // 成功才開始後續動作
+                var responseString = response.Content.ReadAsStringAsync().Result;
+
+                MessageBox.Show(responseString);
+
+                // var results = JObject.Parse(json).SelectToken("results") as JArray;
+            }
+            else
+            {   // 可編寫錯誤動作
+
+            }
+
+
+
+
+
+            #endregion
+
+
+            #region WebClient
+            // Available in: .NET Framework 1.1+, .NET Standard 2.0+, .NET Core 2.0+ 
+
+            //using (var wb = new WebClient())
+            //{
+            //    var data = new NameValueCollection();
+            //    data["system"] = system;
+            //    data["account"] = account;
+            //    data["password"] = password;
+
+            //    var response = wb.UploadValues(POST, "POST", data);
+
+
+            //    MessageBox.Show(Encoding.UTF8.GetString(response));
+            //}
+            #endregion
+
+            #region WebClient
+            //var request = (HttpWebRequest)WebRequest.Create("http://www.example.com/recepticle.aspx");
+
+            //var postData = "thing1=hello";
+            //postData += "&thing2=world";
+            //var data = Encoding.ASCII.GetBytes(postData);
+
+            //request.Method = "POST";
+            //request.ContentType = "application/x-www-form-urlencoded";
+            //request.ContentLength = data.Length;
+
+            //using (var stream = request.GetRequestStream())
+            //{
+            //    stream.Write(data, 0, data.Length);
+            //}
+
+            //var response = (HttpWebResponse)request.GetResponse();
+
+            //var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
+            #endregion
+
+
+
+        }
     }
 
     public class Global
@@ -139,5 +221,6 @@ namespace RestaurantSys
         public static bool bPlayingVideo = false;
         public static Capture AdFrameGrabber;
         public static int AdtimerIntervalBuffer = 0;
+        public static string MainSessionID = "";
     }
 }

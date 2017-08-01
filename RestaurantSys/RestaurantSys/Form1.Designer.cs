@@ -38,14 +38,17 @@
             this.RemoveButton = new System.Windows.Forms.Button();
             this.SetButton = new System.Windows.Forms.Button();
             this.OrderButton = new System.Windows.Forms.Button();
+            this.TestPanel = new System.Windows.Forms.Panel();
+            this.LogInButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.AdRotator)).BeginInit();
+            this.TestPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // AdRotator
             // 
             this.AdRotator.Location = new System.Drawing.Point(12, 12);
             this.AdRotator.Name = "AdRotator";
-            this.AdRotator.Size = new System.Drawing.Size(441, 340);
+            this.AdRotator.Size = new System.Drawing.Size(371, 241);
             this.AdRotator.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.AdRotator.TabIndex = 0;
             this.AdRotator.TabStop = false;
@@ -65,22 +68,22 @@
             // 
             this.AdListBox.FormattingEnabled = true;
             this.AdListBox.ItemHeight = 12;
-            this.AdListBox.Location = new System.Drawing.Point(473, 12);
+            this.AdListBox.Location = new System.Drawing.Point(36, 8);
             this.AdListBox.Name = "AdListBox";
-            this.AdListBox.Size = new System.Drawing.Size(120, 112);
+            this.AdListBox.Size = new System.Drawing.Size(156, 112);
             this.AdListBox.TabIndex = 1;
             // 
             // AdIntervalText
             // 
-            this.AdIntervalText.Location = new System.Drawing.Point(460, 201);
+            this.AdIntervalText.Location = new System.Drawing.Point(36, 157);
             this.AdIntervalText.Name = "AdIntervalText";
-            this.AdIntervalText.Size = new System.Drawing.Size(56, 22);
+            this.AdIntervalText.Size = new System.Drawing.Size(75, 22);
             this.AdIntervalText.TabIndex = 2;
             this.AdIntervalText.Text = "2000";
             // 
             // AddButton
             // 
-            this.AddButton.Location = new System.Drawing.Point(460, 141);
+            this.AddButton.Location = new System.Drawing.Point(36, 126);
             this.AddButton.Name = "AddButton";
             this.AddButton.Size = new System.Drawing.Size(75, 23);
             this.AddButton.TabIndex = 3;
@@ -90,7 +93,7 @@
             // 
             // RemoveButton
             // 
-            this.RemoveButton.Location = new System.Drawing.Point(541, 141);
+            this.RemoveButton.Location = new System.Drawing.Point(117, 126);
             this.RemoveButton.Name = "RemoveButton";
             this.RemoveButton.Size = new System.Drawing.Size(75, 23);
             this.RemoveButton.TabIndex = 4;
@@ -100,7 +103,7 @@
             // 
             // SetButton
             // 
-            this.SetButton.Location = new System.Drawing.Point(522, 199);
+            this.SetButton.Location = new System.Drawing.Point(117, 155);
             this.SetButton.Name = "SetButton";
             this.SetButton.Size = new System.Drawing.Size(75, 23);
             this.SetButton.TabIndex = 5;
@@ -118,23 +121,43 @@
             this.OrderButton.UseVisualStyleBackColor = true;
             this.OrderButton.Click += new System.EventHandler(this.OrderButton_Click);
             // 
+            // TestPanel
+            // 
+            this.TestPanel.Controls.Add(this.LogInButton);
+            this.TestPanel.Controls.Add(this.AdListBox);
+            this.TestPanel.Controls.Add(this.AddButton);
+            this.TestPanel.Controls.Add(this.SetButton);
+            this.TestPanel.Controls.Add(this.AdIntervalText);
+            this.TestPanel.Controls.Add(this.RemoveButton);
+            this.TestPanel.Location = new System.Drawing.Point(429, 4);
+            this.TestPanel.Name = "TestPanel";
+            this.TestPanel.Size = new System.Drawing.Size(200, 255);
+            this.TestPanel.TabIndex = 7;
+            // 
+            // LogInButton
+            // 
+            this.LogInButton.Location = new System.Drawing.Point(36, 185);
+            this.LogInButton.Name = "LogInButton";
+            this.LogInButton.Size = new System.Drawing.Size(75, 23);
+            this.LogInButton.TabIndex = 6;
+            this.LogInButton.Text = "LogIn";
+            this.LogInButton.UseVisualStyleBackColor = true;
+            this.LogInButton.Click += new System.EventHandler(this.LogInButton_ClickAsync);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(633, 399);
+            this.Controls.Add(this.TestPanel);
             this.Controls.Add(this.OrderButton);
-            this.Controls.Add(this.SetButton);
-            this.Controls.Add(this.RemoveButton);
-            this.Controls.Add(this.AddButton);
-            this.Controls.Add(this.AdIntervalText);
-            this.Controls.Add(this.AdListBox);
             this.Controls.Add(this.AdRotator);
             this.Name = "Form1";
-            this.Text = "RealTouch Restaurant System";
+            this.Text = "2";
             ((System.ComponentModel.ISupportInitialize)(this.AdRotator)).EndInit();
+            this.TestPanel.ResumeLayout(false);
+            this.TestPanel.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -149,6 +172,8 @@
         private System.Windows.Forms.Button RemoveButton;
         private System.Windows.Forms.Button SetButton;
         private System.Windows.Forms.Button OrderButton;
+        private System.Windows.Forms.Panel TestPanel;
+        private System.Windows.Forms.Button LogInButton;
     }
 }
 
