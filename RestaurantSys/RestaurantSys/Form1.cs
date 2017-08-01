@@ -132,24 +132,54 @@ namespace RestaurantSys
             frm.ShowDialog(this);
         }
 
-        private string POST_GrapInfoAsync(string a_URL, Dictionary<string, string> a_Params)
-        {
+        private string POST_GrapInfo(string a_URL, string a_Params)
+        {   // HttpWebRequest Method 
             string Result = "";
-            var content = new FormUrlEncodedContent(a_Params);
-            var response =  client.PostAsync(a_URL, content);
-            var StatusCodeString = response.StatusCode.ToString();
-            var StatusCode = response.StatusCode.GetHashCode();
 
-            if (response.StatusCode == HttpStatusCode.OK)
-            {   // 成功才開始後續動作
-                var responseString = response.Content.ReadAsStringAsync().Result;
-                Result = responseString;
-            }
-            else
-            {   // 可編寫錯誤動作
-                Result = "ERROR";
-            }
+            var request = (HttpWebRequest)WebRequest.Create(a_URL);
 
+            byte[] byteArray = Encoding.UTF8.GetBytes(a_Params);
+
+            request.Method = WebRequestMethods.Http.Post;
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentLength = byteArray.Length;
+
+            // Get the request stream.
+            Stream dataStream = request.GetRequestStream();
+            
+            // Write the data to the request stream.
+            dataStream.Write(byteArray, 0, byteArray.Length);
+            
+            // Close the Stream object.
+            dataStream.Close();
+
+            // Get the response.
+            WebResponse response = request.GetResponse();
+            
+            // Display the status.
+            // Console.WriteLine(((HttpWebResponse)response).StatusDescription);
+            
+            // Get the stream containing content returned by the server.
+            dataStream = response.GetResponseStream();
+            
+            // Open the stream using a StreamReader for easy access.
+            StreamReader reader = new StreamReader(dataStream);
+            
+            // Read the content.
+            string responseFromServer = reader.ReadToEnd();
+            
+            // Display the content.
+            // Console.WriteLine(responseFromServer);
+            
+            // Clean up the streams.
+            reader.Close();
+            dataStream.Close();
+            response.Close();
+
+            if(((HttpWebResponse)response).StatusCode == HttpStatusCode.OK)
+            {   // 表示擷取成功 回傳200
+                Result = responseFromServer;
+            }
             return Result;
         }
 
@@ -165,14 +195,14 @@ namespace RestaurantSys
             #region HttpClient
             // Available in: .NET Framework 4.5+, .NET Standard 1.1+, .NET Core 1.0+
 
-            var values = new Dictionary<string, string>
+            var PostParams = new Dictionary<string, string>
             {
                { "system", system },
                { "account", account },
                 { "password", password }
             };
 
-            var content = new FormUrlEncodedContent(values);
+            var content = new FormUrlEncodedContent(PostParams);
             var response = await client.PostAsync(POST, content);
             var StatusCodeString = response.StatusCode.ToString();
             var StatusCode = response.StatusCode.GetHashCode();
@@ -190,6 +220,7 @@ namespace RestaurantSys
                 // values require casting
                 string name = json.name;
                 string sessionID = json.sessionID;
+                Global.MainSessionID = sessionID;
 
                 // var results = JObject.Parse(json).SelectToken("results") as JArray;
 
@@ -200,6 +231,52 @@ namespace RestaurantSys
             }
             #endregion
         }
+
+
+        private void LogIn_HttpWebRequest_Click(object sender, EventArgs e)
+        {
+            string POST = "http://dev.realtouchapp.com/api/v1/windows/zh-Hant/login";
+            string system = "realtouchapp";
+            string account = "ismyaki@gmail.com";
+            string password = "123456";
+
+            var postData = "system=";
+            postData += system + "&";
+            postData += "account=";
+            postData += account + "&";
+            postData += "password=";
+            postData += password;
+
+            string PostResult = POST_GrapInfo(POST, postData);
+            MessageBox.Show(PostResult);
+
+            var JasonString = JsonConvert.DeserializeObject(PostResult);
+            MessageBox.Show(JasonString.ToString());
+
+            dynamic json = JValue.Parse(JasonString.ToString());
+
+            // values require casting
+            string name = json.name;
+            string sessionID = json.sessionID;
+            Global.MainSessionID = sessionID;
+        }
+
+        private void organizerNO_Button_Click(object sender, EventArgs e)
+        {
+            string POST = "http://dev.realtouchapp.com/api/v1/windows/zh-Hant/realtouch/getName";
+            string system = "realtouchapp";
+
+            var postData = "sessionID=";
+            postData += Global.MainSessionID + "&";
+            postData += "system=";
+            postData += system;
+
+            string PostResult = POST_GrapInfo(POST, postData);
+            MessageBox.Show(PostResult);
+
+            var JasonString = JsonConvert.DeserializeObject(PostResult);
+            MessageBox.Show(JasonString.ToString());
+        }
     }
 
     public class Global
@@ -208,5 +285,6 @@ namespace RestaurantSys
         public static Capture AdFrameGrabber;
         public static int AdtimerIntervalBuffer = 0;
         public static string MainSessionID = "";
+        public static string organizerNO = "";
     }
 }

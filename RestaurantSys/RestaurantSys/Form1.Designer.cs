@@ -39,7 +39,9 @@
             this.SetButton = new System.Windows.Forms.Button();
             this.OrderButton = new System.Windows.Forms.Button();
             this.TestPanel = new System.Windows.Forms.Panel();
+            this.LogIn_HttpWebRequest = new System.Windows.Forms.Button();
             this.LogInButton = new System.Windows.Forms.Button();
+            this.organizerNO_Button = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.AdRotator)).BeginInit();
             this.TestPanel.SuspendLayout();
             this.SuspendLayout();
@@ -123,6 +125,8 @@
             // 
             // TestPanel
             // 
+            this.TestPanel.Controls.Add(this.organizerNO_Button);
+            this.TestPanel.Controls.Add(this.LogIn_HttpWebRequest);
             this.TestPanel.Controls.Add(this.LogInButton);
             this.TestPanel.Controls.Add(this.AdListBox);
             this.TestPanel.Controls.Add(this.AddButton);
@@ -131,8 +135,18 @@
             this.TestPanel.Controls.Add(this.RemoveButton);
             this.TestPanel.Location = new System.Drawing.Point(429, 4);
             this.TestPanel.Name = "TestPanel";
-            this.TestPanel.Size = new System.Drawing.Size(200, 255);
+            this.TestPanel.Size = new System.Drawing.Size(200, 341);
             this.TestPanel.TabIndex = 7;
+            // 
+            // LogIn_HttpWebRequest
+            // 
+            this.LogIn_HttpWebRequest.Location = new System.Drawing.Point(117, 185);
+            this.LogIn_HttpWebRequest.Name = "LogIn_HttpWebRequest";
+            this.LogIn_HttpWebRequest.Size = new System.Drawing.Size(75, 23);
+            this.LogIn_HttpWebRequest.TabIndex = 8;
+            this.LogIn_HttpWebRequest.Text = "LogIn_1";
+            this.LogIn_HttpWebRequest.UseVisualStyleBackColor = true;
+            this.LogIn_HttpWebRequest.Click += new System.EventHandler(this.LogIn_HttpWebRequest_Click);
             // 
             // LogInButton
             // 
@@ -143,6 +157,16 @@
             this.LogInButton.Text = "LogIn";
             this.LogInButton.UseVisualStyleBackColor = true;
             this.LogInButton.Click += new System.EventHandler(this.LogInButton_ClickAsync);
+            // 
+            // organizerNO_Button
+            // 
+            this.organizerNO_Button.Location = new System.Drawing.Point(36, 214);
+            this.organizerNO_Button.Name = "organizerNO_Button";
+            this.organizerNO_Button.Size = new System.Drawing.Size(75, 23);
+            this.organizerNO_Button.TabIndex = 9;
+            this.organizerNO_Button.Text = "organizerNO";
+            this.organizerNO_Button.UseVisualStyleBackColor = true;
+            this.organizerNO_Button.Click += new System.EventHandler(this.organizerNO_Button_Click);
             // 
             // Form1
             // 
@@ -174,6 +198,8 @@
         private System.Windows.Forms.Button OrderButton;
         private System.Windows.Forms.Panel TestPanel;
         private System.Windows.Forms.Button LogInButton;
+        private System.Windows.Forms.Button LogIn_HttpWebRequest;
+        private System.Windows.Forms.Button organizerNO_Button;
     }
 }
 
