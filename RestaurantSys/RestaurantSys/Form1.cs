@@ -237,29 +237,7 @@ namespace RestaurantSys
 
         private void LogIn_HttpWebRequest_Click(object sender, EventArgs e)
         {
-            //string POST = "http://dev.realtouchapp.com/api/v1/windows/zh-Hant/login";
-            //string system = "realtouchapp";
-            //string account = "ismyaki@gmail.com";
-            //string password = "123456";
-
-            //var postData = "system=";
-            //postData += system + "&";
-            //postData += "account=";
-            //postData += account + "&";
-            //postData += "password=";
-            //postData += password;
-
-            //string PostResult = POST_GrapInfo(POST, postData);
-
-            string POST = SetURL(POST_DATA_TYPE.LOGIN);
-            string postData = SetPostData(POST_DATA_TYPE.LOGIN);
-            string PostResult = POST_GrapInfo(POST, postData);
-
-            MessageBox.Show(PostResult);
-
-            var JasonString = JsonConvert.DeserializeObject(PostResult);
-            MessageBox.Show(JasonString.ToString());
-
+            var JasonString  = GetJASONResult(POST_DATA_TYPE.LOGIN);
             dynamic json = JValue.Parse(JasonString.ToString());
 
             // values require casting
@@ -268,30 +246,26 @@ namespace RestaurantSys
             Global.MainSessionID = sessionID;
         }
 
+        
+
         private void organizerNO_Button_Click(object sender, EventArgs e)
         {
-            string POST = "http://dev.realtouchapp.com/api/v1/windows/zh-Hant/realtouch/getName";
-            string system = "realtouchapp";
-
-            var postData = "sessionID=";
-            postData += Global.MainSessionID + "&";
-            postData += "system=";
-            postData += system;
-
-            string PostResult = POST_GrapInfo(POST, postData);
-            MessageBox.Show(PostResult);
-
-            var JasonString = JsonConvert.DeserializeObject(PostResult);
-            MessageBox.Show(JasonString.ToString());
+            var JasonString = GetJASONResult(POST_DATA_TYPE.ORGANIZER_NO);
 
             #region With_List
             var JList = JObject.Parse(JasonString.ToString()).SelectToken("shopInfo").ToList();
             long cnt_JList = JList.LongCount();
 
             // 產生新表單給使用者選shop
-            Form frm = new Form();
+            Form frmOrganizerNO = new Form();
             int m_btnWidth = 100;
             int m_btnHeight = 40;
+
+            Panel panelTmp = new Panel();
+            panelTmp.AutoScroll = true;
+            frmOrganizerNO.Controls.Add(panelTmp);
+            panelTmp.Size = new Size(m_btnWidth*3, m_btnHeight*2);
+
             for (int cnt = 0; cnt < cnt_JList; cnt++)
             {
                 var JItem = JList[cnt];
@@ -300,11 +274,12 @@ namespace RestaurantSys
 
                 Button btn = new Button();
 
-                //Panel panelTmp = new Panel();
-                //frm.Controls.Add(panelTmp);
+                // 放在panel上
+                panelTmp.Controls.Add(btn);
 
-                frm.AcceptButton = btn;
-                frm.Controls.Add(btn);
+                // 直接放上表單
+                // frmOrganizerNO.AcceptButton = btn;
+                // frmOrganizerNO.Controls.Add(btn);
 
                 btn.Left = m_btnWidth * cnt;
                 btn.Top = 0;
@@ -316,7 +291,7 @@ namespace RestaurantSys
 
                 btn.Click += new EventHandler(organizerNO_Selcet);
             }
-            frm.Show();
+            frmOrganizerNO.Show();
             #endregion
 
             #region With_JArray
@@ -336,8 +311,12 @@ namespace RestaurantSys
         private void organizerNO_Selcet(object sender, EventArgs e)
         {
             Global.organizerNO = ((Button)sender).Name;
-            // this.Close();
+            
+            // for debug
             MessageBox.Show("organizerNO = " + ((Button)sender).Name);
+
+            // close its form after select
+            ((Button)sender).FindForm().Close();
         }
 
         public enum POST_DATA_TYPE
@@ -350,32 +329,7 @@ namespace RestaurantSys
             PRODUCT = 5
         }
 
-        public class Global
-        {   // 這裡擺放全域變數以供表單間溝通或是static變數需求
-            public static bool bPlayingVideo = false;
-            public static Capture AdFrameGrabber;
-            public static int AdtimerIntervalBuffer = 0;
-
-            // by user input
-            public static string System = "realtouchapp";
-            public static string Account = "ismyaki@gmail.com";
-            public static string Password = "123456";
-
-            // by Web
-            public static string MainSessionID = "";
-            public static string organizerNO = "";
-            public static string systemID = "";
-
-            // const
-            public const string ADKEYWORD = "ADEBOARD";
-            public const string URL_LogIn = "http://dev.realtouchapp.com/api/v1/windows/zh-Hant/login";
-            public const string URL_OrganizerNO = "http://dev.realtouchapp.com/api/v1/windows/zh-Hant/realtouch/getName";
-            public const string URL_NewsList = "http://dev.realtouchapp.com/api/business/v1/windows/zh-Hant/info/news/system";
-            public const string URL_NewsContent = "http://dev.realtouchapp.com/api/business/v1/windows/zh-Hant/info/news/list";
-            public const string URL_CategoryList = "http://dev.realtouchapp.com/api/business/v1/windows/zh-Hant/product/category/list";
-            public const string URL_ProductList = "http://dev.realtouchapp.com/api/business/v1/windows/zh-Hant/product/product/list";
-
-        }
+        
 
         private string SetURL(POST_DATA_TYPE a_Type)
         {
@@ -463,18 +417,27 @@ namespace RestaurantSys
             return postData;
         }
 
+        private object GetJASONResult(POST_DATA_TYPE a_Type)
+        {
+            object JASONResult = "";
+
+            string POST = SetURL(a_Type);
+            string postData = SetPostData(a_Type);
+            string PostResult = POST_GrapInfo(POST, postData);
+            var JasonString = JsonConvert.DeserializeObject(PostResult);
+            JASONResult = JsonConvert.DeserializeObject(PostResult);
+
+            // for debug
+            MessageBox.Show(PostResult);
+            MessageBox.Show(JasonString.ToString());
+
+            return JASONResult;
+        }
+
+
         private void NewsListButton_Click(object sender, EventArgs e)
         {
-            string POST = "http://dev.realtouchapp.com/api/business/v1/windows/zh-Hant/info/news/system";
-
-            var postData = "organizerNO=";
-            postData += Global.organizerNO;
-
-            string PostResult = POST_GrapInfo(POST, postData);
-            MessageBox.Show(PostResult);
-
-            var JasonString = JsonConvert.DeserializeObject(PostResult);
-            MessageBox.Show(JasonString.ToString());
+            var JasonString = GetJASONResult(POST_DATA_TYPE.NEW_LIST);         
 
             #region With_List
             var JList = JObject.Parse(JasonString.ToString()).SelectToken("system").ToList();
@@ -490,28 +453,18 @@ namespace RestaurantSys
                 {
                     Global.systemID = JItem.SelectToken("systemID").ToString();
                 }
-   
             }
             #endregion
         }
 
         private void NewsContentButton_Click(object sender, EventArgs e)
         {
-            string POST = "http://dev.realtouchapp.com/api/business/v1/windows/zh-Hant/info/news/list";
+            var JasonString = GetJASONResult(POST_DATA_TYPE.NEW_CONTENT);
 
-
-            var postData = "sessionID=";
-            postData += Global.MainSessionID + "&";
-            postData += "organizerNO=";
-            postData += Global.organizerNO + "&";
-            postData += "systemID=";
-            postData += Global.systemID;
-
-            string PostResult = POST_GrapInfo(POST, postData);
-            MessageBox.Show(PostResult);
-
-            var JasonString = JsonConvert.DeserializeObject(PostResult);
-            MessageBox.Show(JasonString.ToString());
+            // 建立檔案串流（@ 可取消跳脫字元 escape sequence） for debug
+            StreamWriter sw = new StreamWriter(@"D:\secret_plan.txt");
+            sw.WriteLine(JasonString.ToString());               // 寫入文字
+            sw.Close();                                         // 關閉串流
 
             #region With_List
             //var JList = JObject.Parse(JasonString.ToString()).SelectToken("system").ToList();
@@ -530,5 +483,77 @@ namespace RestaurantSys
             //}
             #endregion
         }
+    }
+
+    public class Global
+    {   // 這裡擺放全域變數以供表單間溝通或是static變數需求
+        public static bool bPlayingVideo = false;
+        public static Capture AdFrameGrabber;
+        public static int AdtimerIntervalBuffer = 0;
+
+        // by user input
+        public static string System = "realtouchapp";
+        public static string Account = "ismyaki@gmail.com";
+        public static string Password = "123456";
+
+        // by Web
+        public static string MainSessionID = "";
+        public static string organizerNO = "";
+        public static string systemID = "";
+
+        // const
+        public const string ADKEYWORD = "ADEBOARD";
+        public const string URL_LogIn = "http://dev.realtouchapp.com/api/v1/windows/zh-Hant/login";
+        public const string URL_OrganizerNO = "http://dev.realtouchapp.com/api/v1/windows/zh-Hant/realtouch/getName";
+        public const string URL_NewsList = "http://dev.realtouchapp.com/api/business/v1/windows/zh-Hant/info/news/system";
+        public const string URL_NewsContent = "http://dev.realtouchapp.com/api/business/v1/windows/zh-Hant/info/news/list";
+        public const string URL_CategoryList = "http://dev.realtouchapp.com/api/business/v1/windows/zh-Hant/product/category/list";
+        public const string URL_ProductList = "http://dev.realtouchapp.com/api/business/v1/windows/zh-Hant/product/product/list";
+
+
+        public void DetailMenuClick(object sender, EventArgs e)
+        {
+            MessageBox.Show(((Button)sender).Text);
+        }
+
+        public void GenButtonDynamic(Global test_o, Panel a_panel, int a_ButtomNum, int a_BtnWidth = 100, int a_BtnHeight = 30, bool a_Mode = true)
+        {
+            int WidthLimit = a_panel.Size.Width;
+            int HeightLimit = a_panel.Size.Height;
+            int RowIndex = 0, ColIndex = 0;
+
+            for (int i = 0; i < a_ButtomNum; i++)
+            {
+                Button btn = new Button();
+                a_panel.Controls.Add(btn);
+                btn.Width = a_BtnWidth;
+                btn.Height = a_BtnHeight;
+
+                if (a_Mode)
+                {
+                    btn.Left = a_BtnWidth * i;
+                    btn.Top = 0;
+                    btn.Text = i.ToString();
+                    btn.Click += new EventHandler(test_o.DetailMenuClick);
+                }
+                else
+                {
+                    if (a_BtnWidth * ColIndex >= WidthLimit)
+                    {
+                        ColIndex = 0;
+                        RowIndex++;
+                    }
+
+                    btn.Left = a_BtnWidth * ColIndex;
+                    btn.Top = RowIndex * a_BtnHeight;
+                    btn.Text = i.ToString();
+                    // btn.Click += new EventHandler(DetailMenuClick);
+
+                    ColIndex++;
+                }
+
+            }
+        }
+
     }
 }
