@@ -39,12 +39,14 @@
             this.SetButton = new System.Windows.Forms.Button();
             this.OrderButton = new System.Windows.Forms.Button();
             this.TestPanel = new System.Windows.Forms.Panel();
+            this.DownloadButton = new System.Windows.Forms.Button();
             this.NewsContentButton = new System.Windows.Forms.Button();
             this.NewsListButton = new System.Windows.Forms.Button();
             this.organizerNO_Button = new System.Windows.Forms.Button();
-            this.LogIn_HttpWebRequest = new System.Windows.Forms.Button();
+            this.LogIn = new System.Windows.Forms.Button();
             this.LogInButton = new System.Windows.Forms.Button();
-            this.DownloadButton = new System.Windows.Forms.Button();
+            this.CategoryButton = new System.Windows.Forms.Button();
+            this.ProductButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.AdRotator)).BeginInit();
             this.TestPanel.SuspendLayout();
             this.SuspendLayout();
@@ -73,14 +75,14 @@
             // 
             this.AdListBox.FormattingEnabled = true;
             this.AdListBox.ItemHeight = 12;
-            this.AdListBox.Location = new System.Drawing.Point(36, 8);
+            this.AdListBox.Location = new System.Drawing.Point(13, 8);
             this.AdListBox.Name = "AdListBox";
-            this.AdListBox.Size = new System.Drawing.Size(156, 112);
+            this.AdListBox.Size = new System.Drawing.Size(194, 76);
             this.AdListBox.TabIndex = 1;
             // 
             // AdIntervalText
             // 
-            this.AdIntervalText.Location = new System.Drawing.Point(36, 157);
+            this.AdIntervalText.Location = new System.Drawing.Point(36, 119);
             this.AdIntervalText.Name = "AdIntervalText";
             this.AdIntervalText.Size = new System.Drawing.Size(75, 22);
             this.AdIntervalText.TabIndex = 2;
@@ -88,7 +90,7 @@
             // 
             // AddButton
             // 
-            this.AddButton.Location = new System.Drawing.Point(36, 126);
+            this.AddButton.Location = new System.Drawing.Point(36, 90);
             this.AddButton.Name = "AddButton";
             this.AddButton.Size = new System.Drawing.Size(75, 23);
             this.AddButton.TabIndex = 3;
@@ -98,7 +100,7 @@
             // 
             // RemoveButton
             // 
-            this.RemoveButton.Location = new System.Drawing.Point(117, 126);
+            this.RemoveButton.Location = new System.Drawing.Point(117, 90);
             this.RemoveButton.Name = "RemoveButton";
             this.RemoveButton.Size = new System.Drawing.Size(75, 23);
             this.RemoveButton.TabIndex = 4;
@@ -108,7 +110,7 @@
             // 
             // SetButton
             // 
-            this.SetButton.Location = new System.Drawing.Point(117, 155);
+            this.SetButton.Location = new System.Drawing.Point(117, 119);
             this.SetButton.Name = "SetButton";
             this.SetButton.Size = new System.Drawing.Size(75, 23);
             this.SetButton.TabIndex = 5;
@@ -128,25 +130,37 @@
             // 
             // TestPanel
             // 
+            this.TestPanel.Controls.Add(this.ProductButton);
+            this.TestPanel.Controls.Add(this.CategoryButton);
             this.TestPanel.Controls.Add(this.DownloadButton);
             this.TestPanel.Controls.Add(this.NewsContentButton);
             this.TestPanel.Controls.Add(this.NewsListButton);
             this.TestPanel.Controls.Add(this.organizerNO_Button);
-            this.TestPanel.Controls.Add(this.LogIn_HttpWebRequest);
+            this.TestPanel.Controls.Add(this.LogIn);
             this.TestPanel.Controls.Add(this.LogInButton);
             this.TestPanel.Controls.Add(this.AdListBox);
             this.TestPanel.Controls.Add(this.AddButton);
             this.TestPanel.Controls.Add(this.SetButton);
             this.TestPanel.Controls.Add(this.AdIntervalText);
             this.TestPanel.Controls.Add(this.RemoveButton);
-            this.TestPanel.Location = new System.Drawing.Point(429, 4);
+            this.TestPanel.Location = new System.Drawing.Point(403, 4);
             this.TestPanel.Name = "TestPanel";
-            this.TestPanel.Size = new System.Drawing.Size(200, 341);
+            this.TestPanel.Size = new System.Drawing.Size(226, 341);
             this.TestPanel.TabIndex = 7;
+            // 
+            // DownloadButton
+            // 
+            this.DownloadButton.Location = new System.Drawing.Point(36, 176);
+            this.DownloadButton.Name = "DownloadButton";
+            this.DownloadButton.Size = new System.Drawing.Size(156, 23);
+            this.DownloadButton.TabIndex = 12;
+            this.DownloadButton.Text = "Download";
+            this.DownloadButton.UseVisualStyleBackColor = true;
+            this.DownloadButton.Click += new System.EventHandler(this.DownloadButton_Click);
             // 
             // NewsContentButton
             // 
-            this.NewsContentButton.Location = new System.Drawing.Point(36, 243);
+            this.NewsContentButton.Location = new System.Drawing.Point(36, 302);
             this.NewsContentButton.Name = "NewsContentButton";
             this.NewsContentButton.Size = new System.Drawing.Size(75, 23);
             this.NewsContentButton.TabIndex = 11;
@@ -156,7 +170,7 @@
             // 
             // NewsListButton
             // 
-            this.NewsListButton.Location = new System.Drawing.Point(117, 214);
+            this.NewsListButton.Location = new System.Drawing.Point(36, 273);
             this.NewsListButton.Name = "NewsListButton";
             this.NewsListButton.Size = new System.Drawing.Size(75, 23);
             this.NewsListButton.TabIndex = 10;
@@ -166,7 +180,7 @@
             // 
             // organizerNO_Button
             // 
-            this.organizerNO_Button.Location = new System.Drawing.Point(36, 214);
+            this.organizerNO_Button.Location = new System.Drawing.Point(117, 148);
             this.organizerNO_Button.Name = "organizerNO_Button";
             this.organizerNO_Button.Size = new System.Drawing.Size(75, 23);
             this.organizerNO_Button.TabIndex = 9;
@@ -174,35 +188,44 @@
             this.organizerNO_Button.UseVisualStyleBackColor = true;
             this.organizerNO_Button.Click += new System.EventHandler(this.organizerNO_Button_Click);
             // 
-            // LogIn_HttpWebRequest
+            // LogIn
             // 
-            this.LogIn_HttpWebRequest.Location = new System.Drawing.Point(117, 185);
-            this.LogIn_HttpWebRequest.Name = "LogIn_HttpWebRequest";
-            this.LogIn_HttpWebRequest.Size = new System.Drawing.Size(75, 23);
-            this.LogIn_HttpWebRequest.TabIndex = 8;
-            this.LogIn_HttpWebRequest.Text = "LogIn_1";
-            this.LogIn_HttpWebRequest.UseVisualStyleBackColor = true;
-            this.LogIn_HttpWebRequest.Click += new System.EventHandler(this.LogIn_HttpWebRequest_Click);
+            this.LogIn.Location = new System.Drawing.Point(36, 147);
+            this.LogIn.Name = "LogIn";
+            this.LogIn.Size = new System.Drawing.Size(75, 23);
+            this.LogIn.TabIndex = 8;
+            this.LogIn.Text = "LogIn";
+            this.LogIn.UseVisualStyleBackColor = true;
+            this.LogIn.Click += new System.EventHandler(this.LogIn_Click);
             // 
             // LogInButton
             // 
-            this.LogInButton.Location = new System.Drawing.Point(36, 185);
+            this.LogInButton.Location = new System.Drawing.Point(36, 244);
             this.LogInButton.Name = "LogInButton";
             this.LogInButton.Size = new System.Drawing.Size(75, 23);
             this.LogInButton.TabIndex = 6;
-            this.LogInButton.Text = "LogIn";
+            this.LogInButton.Text = "LogIn_old";
             this.LogInButton.UseVisualStyleBackColor = true;
             this.LogInButton.Click += new System.EventHandler(this.LogInButton_ClickAsync);
             // 
-            // DownloadButton
+            // CategoryButton
             // 
-            this.DownloadButton.Location = new System.Drawing.Point(117, 243);
-            this.DownloadButton.Name = "DownloadButton";
-            this.DownloadButton.Size = new System.Drawing.Size(75, 23);
-            this.DownloadButton.TabIndex = 12;
-            this.DownloadButton.Text = "Download";
-            this.DownloadButton.UseVisualStyleBackColor = true;
-            this.DownloadButton.Click += new System.EventHandler(this.DownloadButton_Click);
+            this.CategoryButton.Location = new System.Drawing.Point(117, 273);
+            this.CategoryButton.Name = "CategoryButton";
+            this.CategoryButton.Size = new System.Drawing.Size(75, 23);
+            this.CategoryButton.TabIndex = 13;
+            this.CategoryButton.Text = "Category";
+            this.CategoryButton.UseVisualStyleBackColor = true;
+            this.CategoryButton.Click += new System.EventHandler(this.CategoryButton_Click);
+            // 
+            // ProductButton
+            // 
+            this.ProductButton.Location = new System.Drawing.Point(117, 302);
+            this.ProductButton.Name = "ProductButton";
+            this.ProductButton.Size = new System.Drawing.Size(75, 23);
+            this.ProductButton.TabIndex = 14;
+            this.ProductButton.Text = "Product";
+            this.ProductButton.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -234,11 +257,13 @@
         private System.Windows.Forms.Button OrderButton;
         private System.Windows.Forms.Panel TestPanel;
         private System.Windows.Forms.Button LogInButton;
-        private System.Windows.Forms.Button LogIn_HttpWebRequest;
+        private System.Windows.Forms.Button LogIn;
         private System.Windows.Forms.Button organizerNO_Button;
         private System.Windows.Forms.Button NewsListButton;
         private System.Windows.Forms.Button NewsContentButton;
         private System.Windows.Forms.Button DownloadButton;
+        private System.Windows.Forms.Button ProductButton;
+        private System.Windows.Forms.Button CategoryButton;
     }
 }
 
