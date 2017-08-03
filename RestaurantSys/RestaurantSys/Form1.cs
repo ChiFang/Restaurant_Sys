@@ -222,7 +222,7 @@ namespace RestaurantSys
                 // values require casting
                 string name = json.name;
                 string sessionID = json.sessionID;
-                Global.MainSessionID = sessionID;
+                Global.SessionID = sessionID;
 
 
 
@@ -237,19 +237,22 @@ namespace RestaurantSys
 
         private void LogIn_HttpWebRequest_Click(object sender, EventArgs e)
         {
-            var JasonString  = GetJASONResult(POST_DATA_TYPE.LOGIN);
+            GetSessionID();
+        }
+
+        private void GetSessionID()
+        {   // 這裡必須確定"帳號"&"密碼"都已設定好了
+            var JasonString = GetJASONResult(POST_DATA_TYPE.LOGIN);
             dynamic json = JValue.Parse(JasonString.ToString());
 
             // values require casting
             string name = json.name;
             string sessionID = json.sessionID;
-            Global.MainSessionID = sessionID;
+            Global.SessionID = sessionID;
         }
 
-        
-
-        private void organizerNO_Button_Click(object sender, EventArgs e)
-        {
+        private void GetOrganizerNO()
+        {   // 這裡必須確定"SessionID"都已設定好了
             var JasonString = GetJASONResult(POST_DATA_TYPE.ORGANIZER_NO);
 
             #region With_List
@@ -264,22 +267,17 @@ namespace RestaurantSys
             Panel panelTmp = new Panel();
             panelTmp.AutoScroll = true;
             frmOrganizerNO.Controls.Add(panelTmp);
-            panelTmp.Size = new Size(m_btnWidth*3, m_btnHeight*2);
+            panelTmp.Size = new Size(m_btnWidth * 3, m_btnHeight * 2);
 
             for (int cnt = 0; cnt < cnt_JList; cnt++)
             {
                 var JItem = JList[cnt];
                 var organizerNO_tmp = JItem.SelectToken("organizerNO");
                 var name_tmp = JItem.SelectToken("name");
-
                 Button btn = new Button();
 
                 // 放在panel上
                 panelTmp.Controls.Add(btn);
-
-                // 直接放上表單
-                // frmOrganizerNO.AcceptButton = btn;
-                // frmOrganizerNO.Controls.Add(btn);
 
                 btn.Left = m_btnWidth * cnt;
                 btn.Top = 0;
@@ -308,12 +306,120 @@ namespace RestaurantSys
             #endregion
         }
 
+
+        private void GetSystemID()
+        {   // 這裡必須確定"SessionID"&"organizerNO"都已設定好了
+            var JasonString = GetJASONResult(POST_DATA_TYPE.NEW_LIST);
+
+            #region With_List
+            var JList = JObject.Parse(JasonString.ToString()).SelectToken("system").ToList();
+            long cnt_JList = JList.LongCount();
+
+            // 尋找keyword = "ADEBOARD" 的輪播 systemID
+            for (int cnt = 0; cnt < cnt_JList; cnt++)
+            {
+                var JItem = JList[cnt];
+                var Keyword_tmp = JItem.SelectToken("keyword");
+
+                if (Keyword_tmp.ToString() == Global.ADKEYWORD)
+                {
+                    Global.systemID = JItem.SelectToken("systemID").ToString();
+                }
+            }
+            #endregion
+        }
+
+        private void GetAD_Content()
+        {   // 這裡必須確定"SessionID"&"organizerNO"&"systemID"都已設定好了
+            var JasonString = GetJASONResult(POST_DATA_TYPE.NEW_CONTENT);
+
+            if (Directory.Exists(Global.TempDatadirPath))
+            {
+                Console.WriteLine("The directory {0} already exists.", Global.TempDatadirPath);
+            }
+            else
+            {
+                Directory.CreateDirectory(Global.TempDatadirPath);
+                Console.WriteLine("The directory {0} was created.", Global.TempDatadirPath);
+            }
+
+            // 建立檔案串流（@ 可取消跳脫字元 escape sequence） for log
+            StreamWriter sw = new StreamWriter(Global.TempDatadirPath + @"AD_Content_Log.txt");
+            sw.WriteLine(JasonString.ToString());               // 寫入文字
+            sw.Close();                                         // 關閉串流
+
+            #region With_List
+
+            // 抓取 Jason 中的 "news"內容清單並轉成List
+            var JList = JObject.Parse(JasonString.ToString()).SelectToken("news").ToList();
+
+            // 取得清單長度
+            long cnt_JList = JList.LongCount();
+
+            // 創建相對應的結構
+            Global.atAD_ContentInfo = new ADInfo[cnt_JList];
+
+            // 將每組輪播資料載入結構
+            for (int cnt = 0; cnt < cnt_JList; cnt++)
+            {
+                var JItem = JList[cnt];
+
+                Global.atAD_ContentInfo[cnt].Sort = Convert.ToInt32(JItem.SelectToken("sort").ToString());
+                Global.atAD_ContentInfo[cnt].name = JItem.SelectToken("name").ToString();
+                Global.atAD_ContentInfo[cnt].newsID = JItem.SelectToken("newsID").ToString();
+                Global.atAD_ContentInfo[cnt].Type = JItem.SelectToken("type").ToString();
+                if (IsMovie(JItem))
+                {   // it's movie  
+                    Global.atAD_ContentInfo[cnt].URL = JItem.SelectToken("movie").ToString();
+                    Global.atAD_ContentInfo[cnt].URLThumb = JItem.SelectToken("pic").ToString();
+
+                    Global.atAD_ContentInfo[cnt].FilenameExtension = ".mp4";
+                }
+                else
+                {   // it's photo
+                    Global.atAD_ContentInfo[cnt].URL = JItem.SelectToken("pic").ToString();
+                    Global.atAD_ContentInfo[cnt].URLThumb = JItem.SelectToken("picThumb").ToString();
+                    Global.atAD_ContentInfo[cnt].FilenameExtension = ".jpg";
+                }
+            }
+            #endregion
+
+            // sort array by "Sort" element
+            Array.Sort(Global.atAD_ContentInfo, delegate (ADInfo item1, ADInfo item2)
+            {
+                return item1.Sort.CompareTo(item2.Sort); // (user1.Sort - user2.Sort)
+            });
+        }
+
+        private void DownLoad_AD_File()
+        {   // 這裡必須確定廣告資料都已載入
+
+            // start to download all ad element
+            for (int cnt = 0; cnt < Global.atAD_ContentInfo.Length; cnt++)
+            {
+                DownloadFile
+                    (Global.atAD_ContentInfo[cnt].URL,
+                    Global.TempDatadirPath + Global.atAD_ContentInfo[cnt].name + Global.atAD_ContentInfo[cnt].FilenameExtension
+                    );
+            }
+        }
+
+        private void organizerNO_Button_Click(object sender, EventArgs e)
+        {
+            GetOrganizerNO();
+        }
+
+
+
         private void organizerNO_Selcet(object sender, EventArgs e)
         {
             Global.organizerNO = ((Button)sender).Name;
-            
-            // for debug
-            MessageBox.Show("organizerNO = " + ((Button)sender).Name);
+
+            if (Global.DEBUG_FLAG > 1)
+            {
+                // for debug
+                MessageBox.Show("organizerNO = " + ((Button)sender).Name);
+            }
 
             // close its form after select
             ((Button)sender).FindForm().Close();
@@ -328,8 +434,6 @@ namespace RestaurantSys
             CATEGORY = 4,
             PRODUCT = 5
         }
-
-        
 
         private string SetURL(POST_DATA_TYPE a_Type)
         {
@@ -379,19 +483,19 @@ namespace RestaurantSys
                     break;
                 case POST_DATA_TYPE.ORGANIZER_NO:
                     postData += "sessionID=";
-                    postData += Global.MainSessionID + "&";
+                    postData += Global.SessionID + "&";
                     postData += "system=";
                     postData += Global.System;
                     break;
                 case POST_DATA_TYPE.NEW_LIST:
                     postData += "sessionID=";
-                    postData += Global.MainSessionID + "&";
+                    postData += Global.SessionID + "&";
                     postData += "organizerNO=";
                     postData += Global.organizerNO;
                     break;
                 case POST_DATA_TYPE.NEW_CONTENT:
                     postData += "sessionID=";
-                    postData += Global.MainSessionID + "&";
+                    postData += Global.SessionID + "&";
                     postData += "organizerNO=";
                     postData += Global.organizerNO + "&";
                     postData += "systemID=";
@@ -399,13 +503,13 @@ namespace RestaurantSys
                     break;
                 case POST_DATA_TYPE.CATEGORY:
                     postData += "sessionID=";
-                    postData += Global.MainSessionID + "&";
+                    postData += Global.SessionID + "&";
                     postData += "organizerNO=";
                     postData += Global.organizerNO;
                     break;
                 case POST_DATA_TYPE.PRODUCT:
                     postData += "sessionID=";
-                    postData += Global.MainSessionID + "&";
+                    postData += Global.SessionID + "&";
                     postData += "organizerNO=";
                     postData += Global.organizerNO;
                     break;
@@ -427,9 +531,13 @@ namespace RestaurantSys
             var JasonString = JsonConvert.DeserializeObject(PostResult);
             JASONResult = JsonConvert.DeserializeObject(PostResult);
 
-            // for debug
-            MessageBox.Show(PostResult);
-            MessageBox.Show(JasonString.ToString());
+
+            if (Global.DEBUG_FLAG > 1)
+            {
+                // for debug
+                MessageBox.Show(PostResult);
+                MessageBox.Show(JasonString.ToString());
+            }
 
             return JASONResult;
         }
@@ -437,102 +545,20 @@ namespace RestaurantSys
 
         private void NewsListButton_Click(object sender, EventArgs e)
         {
-            var JasonString = GetJASONResult(POST_DATA_TYPE.NEW_LIST);         
-
-            #region With_List
-            var JList = JObject.Parse(JasonString.ToString()).SelectToken("system").ToList();
-            long cnt_JList = JList.LongCount();
-
-            // 尋找keyword = "ADEBOARD" 的輪播 systemID
-            for (int cnt = 0; cnt < cnt_JList; cnt++)
-            {
-                var JItem = JList[cnt];
-                var Keyword_tmp = JItem.SelectToken("keyword");
-
-                if (Keyword_tmp.ToString() == Global.ADKEYWORD)
-                {
-                    Global.systemID = JItem.SelectToken("systemID").ToString();
-                }
-            }
-            #endregion
+            GetSystemID();
         }
 
         private void NewsContentButton_Click(object sender, EventArgs e)
         {
-            var JasonString = GetJASONResult(POST_DATA_TYPE.NEW_CONTENT);
+            GetAD_Content();
 
-            if (Directory.Exists(Global.TempDatadirPath))
-            {
-                Console.WriteLine("The directory {0} already exists.", Global.TempDatadirPath);
-            }
-            else
-            {
-                Directory.CreateDirectory(Global.TempDatadirPath);
-                Console.WriteLine("The directory {0} was created.", Global.TempDatadirPath);
-            }
-
-            // 建立檔案串流（@ 可取消跳脫字元 escape sequence） for debug
-            // StreamWriter sw = new StreamWriter(@"D:\secret_plan.txt");
-            // StreamWriter sw = new StreamWriter(Application.StartupPath + @"\AD_Content_Log.txt");
-            StreamWriter sw = new StreamWriter(Global.TempDatadirPath + @"AD_Content_Log.txt");
-            
-
-            sw.WriteLine(JasonString.ToString());               // 寫入文字
-            sw.Close();                                         // 關閉串流
-
-            #region With_List
-
-            // 抓取 Jason 中的 "news"內容清單並轉成List
-            var JList = JObject.Parse(JasonString.ToString()).SelectToken("news").ToList();
-
-            // 取得清單長度
-            long cnt_JList = JList.LongCount();
-
-            // 創建相對應的結構
-            Global.atAD_ContentInfo = new ADInfo[cnt_JList];
-
-            // 尋找 keyword = "ADEBOARD" 的輪播 systemID
-            for (int cnt = 0; cnt < cnt_JList; cnt++)
-            {
-                var JItem = JList[cnt];
-
-                Global.atAD_ContentInfo[cnt].Sort = Convert.ToInt32(JItem.SelectToken("sort").ToString());
-                Global.atAD_ContentInfo[cnt].name = JItem.SelectToken("name").ToString();
-                Global.atAD_ContentInfo[cnt].newsID = JItem.SelectToken("newsID").ToString();
-                Global.atAD_ContentInfo[cnt].Type = JItem.SelectToken("type").ToString();
-                if (IsMovie(JItem))
-                {   // it's movie  
-                    Global.atAD_ContentInfo[cnt].URL = JItem.SelectToken("movie").ToString();
-                    Global.atAD_ContentInfo[cnt].URLThumb = JItem.SelectToken("pic").ToString();
-
-                    Global.atAD_ContentInfo[cnt].FilenameExtension = ".mp4";
-                }
-                else
-                {   // it's photo
-                    Global.atAD_ContentInfo[cnt].URL = JItem.SelectToken("pic").ToString();
-                    Global.atAD_ContentInfo[cnt].URLThumb = JItem.SelectToken("picThumb").ToString();
-                    Global.atAD_ContentInfo[cnt].FilenameExtension = ".jpg";
-                }
-            }
-            #endregion
-
-            // sort array by "Sort" element
-            Array.Sort(Global.atAD_ContentInfo, delegate (ADInfo item1, ADInfo item2)
-            {
-                return item1.Sort.CompareTo(item2.Sort); // (user1.Sort - user2.Sort)
-            });
-
-            // start to download all ad element
-            for (int cnt = 0; cnt < Global.atAD_ContentInfo.Length; cnt++)
-            {
-                DownloadFile
-                    (Global.atAD_ContentInfo[cnt].URL,
-                    Application.StartupPath + @"\temp_file\" + Global.atAD_ContentInfo[cnt].name + Global.atAD_ContentInfo[cnt].FilenameExtension
-                    );
-            }
+            DownLoad_AD_File();
 
             // for debug
-            MessageBox.Show("All AD file are downloaded.");
+            if (Global.DEBUG_FLAG > 0)
+            {
+                MessageBox.Show("All AD file are downloaded.");
+            }
         }
 
         private bool IsMovie(JToken a_JItem)
@@ -563,40 +589,31 @@ namespace RestaurantSys
 
         private void DownloadButton_Click(object sender, EventArgs e)
         {
-            ////
-            ADInfo[] atADInfo = new ADInfo[3];
-            ////
-            atADInfo[0].Sort = 3;
-            atADInfo[0].name = "I am 0";
-
-            atADInfo[1].Sort = 2;
-            atADInfo[1].name = "I am 1";
-
-            atADInfo[2].Sort = 1;
-            atADInfo[2].name = "I am 2";
-
-            // sort array by age
-            Array.Sort(atADInfo, delegate (ADInfo user1, ADInfo user2) {
-                return user1.Sort.CompareTo(user2.Sort); // (user1.Age - user2.Age)
-            });
+            // Global.DEBUG_FLAG = 1;
 
 
-            string remoteUri = "http://dev.storage.realtouchapp.com/business/20170602030636K2D88Q14/publish/036300000000000Z/0363000000000000_img_20170603112233001496488953729358";
-            string fileName = "test.jpg", myStringWebResource = null;
-            // Create a new WebClient instance.
-            WebClient myWebClient = new WebClient();
+            // step 0: 登入 >> 必須輸入帳號、密碼
 
-            // Concatenate the domain with the Web resource filename.
-            // myStringWebResource = remoteUri + fileName;
-            myStringWebResource = remoteUri;
-            Console.WriteLine("Downloading File \"{0}\" from \"{1}\" .......\n\n", fileName, myStringWebResource);
+            // step 1: 取得 SessionID
+            GetSessionID();
 
-            // Download the Web resource and save it into the current filesystem folder.
-            myWebClient.DownloadFile(myStringWebResource, fileName);
-            Console.WriteLine("Successfully Downloaded File \"{0}\" from \"{1}\"", fileName, myStringWebResource);
-            Console.WriteLine("\nDownloaded file saved in the following file system folder:\n\t" + Application.StartupPath);
+            // step 2: 取得 OrganizerNO
+            GetOrganizerNO();
 
+            // step 3: 取得 SystemID >> keyword = "ADEBOARD" 的輪播 systemID
+            GetSystemID();
 
+            // step 4: 取得輪播內容
+            GetAD_Content();
+
+            // step 5: 下載所有輪播檔案
+            DownLoad_AD_File();
+
+            // for debug
+            if (Global.DEBUG_FLAG > 0)
+            {
+                MessageBox.Show("All AD file are downloaded.");
+            }
         }
     }
 
@@ -630,13 +647,15 @@ namespace RestaurantSys
         public static ADInfo[] atAD_ContentInfo = null;
         public static string TempDatadirPath = Application.StartupPath + @"\temp_file\";
 
+        public static int DEBUG_FLAG = 2;
+
         // by user input
         public static string System = "realtouchapp";
         public static string Account = "ismyaki@gmail.com";
         public static string Password = "123456";
 
         // by Web
-        public static string MainSessionID = "";
+        public static string SessionID = "";
         public static string organizerNO = "";
         public static string systemID = "";
 
