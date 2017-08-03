@@ -42,7 +42,7 @@ Restaurant order system
     
     d. 通知伺服器點餐結果
     
-    e. 語音辨識
+    e. 語音辨識 >> 可用google or AWS
     
     f. 小遊戲
     

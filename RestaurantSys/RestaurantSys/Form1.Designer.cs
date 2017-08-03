@@ -39,11 +39,12 @@
             this.SetButton = new System.Windows.Forms.Button();
             this.OrderButton = new System.Windows.Forms.Button();
             this.TestPanel = new System.Windows.Forms.Panel();
+            this.NewsContentButton = new System.Windows.Forms.Button();
+            this.NewsListButton = new System.Windows.Forms.Button();
             this.organizerNO_Button = new System.Windows.Forms.Button();
             this.LogIn_HttpWebRequest = new System.Windows.Forms.Button();
             this.LogInButton = new System.Windows.Forms.Button();
-            this.NewsListButton = new System.Windows.Forms.Button();
-            this.NewsContentButton = new System.Windows.Forms.Button();
+            this.DownloadButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.AdRotator)).BeginInit();
             this.TestPanel.SuspendLayout();
             this.SuspendLayout();
@@ -127,6 +128,7 @@
             // 
             // TestPanel
             // 
+            this.TestPanel.Controls.Add(this.DownloadButton);
             this.TestPanel.Controls.Add(this.NewsContentButton);
             this.TestPanel.Controls.Add(this.NewsListButton);
             this.TestPanel.Controls.Add(this.organizerNO_Button);
@@ -141,6 +143,26 @@
             this.TestPanel.Name = "TestPanel";
             this.TestPanel.Size = new System.Drawing.Size(200, 341);
             this.TestPanel.TabIndex = 7;
+            // 
+            // NewsContentButton
+            // 
+            this.NewsContentButton.Location = new System.Drawing.Point(36, 243);
+            this.NewsContentButton.Name = "NewsContentButton";
+            this.NewsContentButton.Size = new System.Drawing.Size(75, 23);
+            this.NewsContentButton.TabIndex = 11;
+            this.NewsContentButton.Text = "NewsContent";
+            this.NewsContentButton.UseVisualStyleBackColor = true;
+            this.NewsContentButton.Click += new System.EventHandler(this.NewsContentButton_Click);
+            // 
+            // NewsListButton
+            // 
+            this.NewsListButton.Location = new System.Drawing.Point(117, 214);
+            this.NewsListButton.Name = "NewsListButton";
+            this.NewsListButton.Size = new System.Drawing.Size(75, 23);
+            this.NewsListButton.TabIndex = 10;
+            this.NewsListButton.Text = "NewsList";
+            this.NewsListButton.UseVisualStyleBackColor = true;
+            this.NewsListButton.Click += new System.EventHandler(this.NewsListButton_Click);
             // 
             // organizerNO_Button
             // 
@@ -172,25 +194,15 @@
             this.LogInButton.UseVisualStyleBackColor = true;
             this.LogInButton.Click += new System.EventHandler(this.LogInButton_ClickAsync);
             // 
-            // NewsListButton
+            // DownloadButton
             // 
-            this.NewsListButton.Location = new System.Drawing.Point(117, 214);
-            this.NewsListButton.Name = "NewsListButton";
-            this.NewsListButton.Size = new System.Drawing.Size(75, 23);
-            this.NewsListButton.TabIndex = 10;
-            this.NewsListButton.Text = "NewsList";
-            this.NewsListButton.UseVisualStyleBackColor = true;
-            this.NewsListButton.Click += new System.EventHandler(this.NewsListButton_Click);
-            // 
-            // NewsContentButton
-            // 
-            this.NewsContentButton.Location = new System.Drawing.Point(36, 243);
-            this.NewsContentButton.Name = "NewsContentButton";
-            this.NewsContentButton.Size = new System.Drawing.Size(75, 23);
-            this.NewsContentButton.TabIndex = 11;
-            this.NewsContentButton.Text = "NewsContent";
-            this.NewsContentButton.UseVisualStyleBackColor = true;
-            this.NewsContentButton.Click += new System.EventHandler(this.NewsContentButton_Click);
+            this.DownloadButton.Location = new System.Drawing.Point(117, 243);
+            this.DownloadButton.Name = "DownloadButton";
+            this.DownloadButton.Size = new System.Drawing.Size(75, 23);
+            this.DownloadButton.TabIndex = 12;
+            this.DownloadButton.Text = "Download";
+            this.DownloadButton.UseVisualStyleBackColor = true;
+            this.DownloadButton.Click += new System.EventHandler(this.DownloadButton_Click);
             // 
             // Form1
             // 
@@ -226,6 +238,7 @@
         private System.Windows.Forms.Button organizerNO_Button;
         private System.Windows.Forms.Button NewsListButton;
         private System.Windows.Forms.Button NewsContentButton;
+        private System.Windows.Forms.Button DownloadButton;
     }
 }
 

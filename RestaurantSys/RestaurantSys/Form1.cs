@@ -483,6 +483,29 @@ namespace RestaurantSys
             //}
             #endregion
         }
+
+        private void DownloadButton_Click(object sender, EventArgs e)
+        {
+            string remoteUri = "http://dev.storage.realtouchapp.com/business/20170602030636K2D88Q14/publish/036300000000000Z/0363000000000000_img_20170603112233001496488953729358";
+            string fileName = "test.jpg", myStringWebResource = null;
+            // Create a new WebClient instance.
+            WebClient myWebClient = new WebClient();
+
+            // Concatenate the domain with the Web resource filename.
+            // myStringWebResource = remoteUri + fileName;
+            myStringWebResource = remoteUri;
+            Console.WriteLine("Downloading File \"{0}\" from \"{1}\" .......\n\n", fileName, myStringWebResource);
+
+            // Download the Web resource and save it into the current filesystem folder.
+            myWebClient.DownloadFile(myStringWebResource, fileName);
+            Console.WriteLine("Successfully Downloaded File \"{0}\" from \"{1}\"", fileName, myStringWebResource);
+            Console.WriteLine("\nDownloaded file saved in the following file system folder:\n\t" + Application.StartupPath);
+
+            //System.Drawing.ImageConverter converter = new System.Drawing.ImageConverter();
+            //Image img = (Image)converter.ConvertFrom(remoteUri);
+            //img.Save(Application.StartupPath + "test.jpg");
+
+        }
     }
 
     public class Global
