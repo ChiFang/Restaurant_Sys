@@ -63,7 +63,7 @@ namespace RestaurantSys
                     AdListBox.SelectedIndex = (AdListBox.SelectedIndex + 1) % AdListBox.Items.Count;
                     AdRotator.ImageLocation = AdListBox.SelectedItem.ToString();
 
-                    int IsVedeo = AdRotator.ImageLocation.IndexOf(".avi");
+                    int IsVedeo = AdRotator.ImageLocation.IndexOf(".mp4");
                     if (IsVedeo >= 0)
                     {   // 遇到影片 必須改變 timer1.Interval 為 1/fps 並且停止更新 AdListBox.SelectedIndex 直到影片播完
 
