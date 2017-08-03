@@ -461,31 +461,126 @@ namespace RestaurantSys
         {
             var JasonString = GetJASONResult(POST_DATA_TYPE.NEW_CONTENT);
 
+            if (Directory.Exists(Global.TempDatadirPath))
+            {
+                Console.WriteLine("The directory {0} already exists.", Global.TempDatadirPath);
+            }
+            else
+            {
+                Directory.CreateDirectory(Global.TempDatadirPath);
+                Console.WriteLine("The directory {0} was created.", Global.TempDatadirPath);
+            }
+
             // 建立檔案串流（@ 可取消跳脫字元 escape sequence） for debug
-            StreamWriter sw = new StreamWriter(@"D:\secret_plan.txt");
+            // StreamWriter sw = new StreamWriter(@"D:\secret_plan.txt");
+            // StreamWriter sw = new StreamWriter(Application.StartupPath + @"\AD_Content_Log.txt");
+            StreamWriter sw = new StreamWriter(Global.TempDatadirPath + @"AD_Content_Log.txt");
+            
+
             sw.WriteLine(JasonString.ToString());               // 寫入文字
             sw.Close();                                         // 關閉串流
 
             #region With_List
-            //var JList = JObject.Parse(JasonString.ToString()).SelectToken("system").ToList();
-            //long cnt_JList = JList.LongCount();
 
-            //// 尋找keyword = "ADEBOARD" 的輪播 systemID
-            //for (int cnt = 0; cnt < cnt_JList; cnt++)
-            //{
-            //    var JItem = JList[cnt];
-            //    var Keyword_tmp = JItem.SelectToken("keyword");
+            // 抓取 Jason 中的 "news"內容清單並轉成List
+            var JList = JObject.Parse(JasonString.ToString()).SelectToken("news").ToList();
 
-            //    if (Keyword_tmp.ToString() == Global.ADKEYWORD)
-            //    {
-            //        Global.systemID = JItem.SelectToken("systemID").ToString();
-            //    }
-            //}
+            // 取得清單長度
+            long cnt_JList = JList.LongCount();
+
+            // 創建相對應的結構
+            Global.atAD_ContentInfo = new ADInfo[cnt_JList];
+
+            // 尋找 keyword = "ADEBOARD" 的輪播 systemID
+            for (int cnt = 0; cnt < cnt_JList; cnt++)
+            {
+                var JItem = JList[cnt];
+
+                Global.atAD_ContentInfo[cnt].Sort = Convert.ToInt32(JItem.SelectToken("sort").ToString());
+                Global.atAD_ContentInfo[cnt].name = JItem.SelectToken("name").ToString();
+                Global.atAD_ContentInfo[cnt].newsID = JItem.SelectToken("newsID").ToString();
+                Global.atAD_ContentInfo[cnt].Type = JItem.SelectToken("type").ToString();
+                if (IsMovie(JItem))
+                {   // it's movie  
+                    Global.atAD_ContentInfo[cnt].URL = JItem.SelectToken("movie").ToString();
+                    Global.atAD_ContentInfo[cnt].URLThumb = JItem.SelectToken("pic").ToString();
+
+                    Global.atAD_ContentInfo[cnt].FilenameExtension = ".mp4";
+                }
+                else
+                {   // it's photo
+                    Global.atAD_ContentInfo[cnt].URL = JItem.SelectToken("pic").ToString();
+                    Global.atAD_ContentInfo[cnt].URLThumb = JItem.SelectToken("picThumb").ToString();
+                    Global.atAD_ContentInfo[cnt].FilenameExtension = ".jpg";
+                }
+            }
             #endregion
+
+            // sort array by "Sort" element
+            Array.Sort(Global.atAD_ContentInfo, delegate (ADInfo item1, ADInfo item2)
+            {
+                return item1.Sort.CompareTo(item2.Sort); // (user1.Sort - user2.Sort)
+            });
+
+            // start to download all ad element
+            for (int cnt = 0; cnt < Global.atAD_ContentInfo.Length; cnt++)
+            {
+                DownloadFile
+                    (Global.atAD_ContentInfo[cnt].URL,
+                    Application.StartupPath + @"\temp_file\" + Global.atAD_ContentInfo[cnt].name + Global.atAD_ContentInfo[cnt].FilenameExtension
+                    );
+            }
+
+            // for debug
+            MessageBox.Show("All AD file are downloaded.");
+        }
+
+        private bool IsMovie(JToken a_JItem)
+        {
+            if (a_JItem.SelectToken("movie") == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private void DownloadFile(string a_RemoteURL, string a_FileName)
+        {
+            // Create a new WebClient instance.
+            WebClient myWebClient = new WebClient();
+
+            // Concatenate the domain with the Web resource filename.
+            Console.WriteLine("Downloading File \"{0}\" from \"{1}\" .......\n\n", a_FileName, a_RemoteURL);
+
+            // Download the Web resource and save it into the current filesystem folder.
+            myWebClient.DownloadFile(a_RemoteURL, a_FileName);
+            Console.WriteLine("Successfully Downloaded File \"{0}\" from \"{1}\"", a_FileName, a_RemoteURL);
+            Console.WriteLine("\nDownloaded file saved in the following file system folder:\n\t" + Application.StartupPath);
         }
 
         private void DownloadButton_Click(object sender, EventArgs e)
         {
+            ////
+            ADInfo[] atADInfo = new ADInfo[3];
+            ////
+            atADInfo[0].Sort = 3;
+            atADInfo[0].name = "I am 0";
+
+            atADInfo[1].Sort = 2;
+            atADInfo[1].name = "I am 1";
+
+            atADInfo[2].Sort = 1;
+            atADInfo[2].name = "I am 2";
+
+            // sort array by age
+            Array.Sort(atADInfo, delegate (ADInfo user1, ADInfo user2) {
+                return user1.Sort.CompareTo(user2.Sort); // (user1.Age - user2.Age)
+            });
+
+
             string remoteUri = "http://dev.storage.realtouchapp.com/business/20170602030636K2D88Q14/publish/036300000000000Z/0363000000000000_img_20170603112233001496488953729358";
             string fileName = "test.jpg", myStringWebResource = null;
             // Create a new WebClient instance.
@@ -501,10 +596,29 @@ namespace RestaurantSys
             Console.WriteLine("Successfully Downloaded File \"{0}\" from \"{1}\"", fileName, myStringWebResource);
             Console.WriteLine("\nDownloaded file saved in the following file system folder:\n\t" + Application.StartupPath);
 
-            //System.Drawing.ImageConverter converter = new System.Drawing.ImageConverter();
-            //Image img = (Image)converter.ConvertFrom(remoteUri);
-            //img.Save(Application.StartupPath + "test.jpg");
 
+        }
+    }
+
+    /// <summary> ad info </summary>
+    public struct ADInfo
+    {
+        public int Sort;
+        public string Type;
+
+        public string URL;
+        public string URLThumb;
+        public string name;
+        public string newsID;
+
+        public string FilenameExtension;
+
+
+        /// <summary> reset coordinate </summary>
+        public void Init()
+        {
+            Sort = 0;
+            Type = "0";
         }
     }
 
@@ -513,6 +627,8 @@ namespace RestaurantSys
         public static bool bPlayingVideo = false;
         public static Capture AdFrameGrabber;
         public static int AdtimerIntervalBuffer = 0;
+        public static ADInfo[] atAD_ContentInfo = null;
+        public static string TempDatadirPath = Application.StartupPath + @"\temp_file\";
 
         // by user input
         public static string System = "realtouchapp";
