@@ -154,6 +154,7 @@
             this.ProductButton.TabIndex = 14;
             this.ProductButton.Text = "Product";
             this.ProductButton.UseVisualStyleBackColor = true;
+            this.ProductButton.Click += new System.EventHandler(this.ProductButton_Click);
             // 
             // CategoryButton
             // 

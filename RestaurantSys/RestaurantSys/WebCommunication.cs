@@ -56,7 +56,7 @@ namespace RestaurantSys
         }
     }
 
-    /// <summary> ad info </summary>
+    /// <summary>  Category info </summary>
     public struct CategoryInfo
     {
         public int Sort;
@@ -83,6 +83,32 @@ namespace RestaurantSys
         }
     }
 
+    /// <summary>  Product info </summary>
+    public struct ProductInfo
+    {
+        public int Sort;
+        public double service;
+        public double discount;
+
+        public string type;
+        public string productType;
+        public string productID;
+        public string productName;
+        public string productForeignName;
+
+        public string productShortName;
+        public string isCurrentPrice;
+        public string commission;
+        public string note;
+
+
+        /// <summary> reset coordinate </summary>
+        public void Init()
+        {
+         
+        }
+    }
+
     public class Global
     {   // 這裡擺放全域變數以供表單間溝通或是static變數需求
         public static bool bPlayingVideo = false;
@@ -90,6 +116,7 @@ namespace RestaurantSys
         public static int AdtimerIntervalBuffer = 0;
         public static ADInfo[] atAD_ContentInfo = null;
         public static CategoryInfo[] atCategoryInfo = null;
+        public static ProductInfo[] atProductInfo = null;
         public static string TempDatadirPath = Application.StartupPath + @"\temp_file\";
 
         public static int DEBUG_FLAG = 1;
@@ -531,7 +558,7 @@ namespace RestaurantSys
         }
 
         public static void Get_CategoryContent()
-        {   // 這裡必須確定"SessionID"&"organizerNO"&"systemID"都已設定好了
+        {   // 這裡必須確定"SessionID"&"organizerNO"都已設定好了
 
             // Global.DEBUG_FLAG = 1;
 
@@ -597,6 +624,47 @@ namespace RestaurantSys
             {
                 return item1.Sort.CompareTo(item2.Sort); // (user1.Sort - user2.Sort)
             });
+        }
+
+        public static void Get_Product()
+        {   // 這裡必須確定"SessionID"&"organizerNO"都已設定好了
+
+            // Global.DEBUG_FLAG = 1;
+
+            var JasonString = GetJASONResult(POST_DATA_TYPE.PRODUCT);
+
+            if (Directory.Exists(Global.TempDatadirPath))
+            {
+                Console.WriteLine("The directory {0} already exists.", Global.TempDatadirPath);
+            }
+            else
+            {
+                Directory.CreateDirectory(Global.TempDatadirPath);
+                Console.WriteLine("The directory {0} was created.", Global.TempDatadirPath);
+            }
+
+            // 建立檔案串流（@ 可取消跳脫字元 escape sequence） for log
+            StreamWriter sw = new StreamWriter(Global.TempDatadirPath + @"Product_Log.txt");
+            sw.WriteLine(JasonString.ToString());               // 寫入文字
+            sw.Close();                                         // 關閉串流
+
+            #region With_List
+
+            // 抓取 Jason 中的 "product"內容清單並轉成List
+            var JList = JObject.Parse(JasonString.ToString()).SelectToken("product").ToList();
+
+            // 取得category長度
+            long cnt_JList = JList.LongCount();
+
+            // 創建相對應的結構
+            Global.atProductInfo = new ProductInfo[cnt_JList];
+
+            // 將每組輪播資料載入結構
+            for (int cnt = 0; cnt < cnt_JList; cnt++)
+            {
+                var JItem = JList[cnt];
+            }
+            #endregion
         }
 
         public static void DownLoad_Category_File()

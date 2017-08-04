@@ -227,11 +227,24 @@ namespace RestaurantSys
             {
                 MessageBox.Show("There are " + Global.atCategoryInfo.Length.ToString() + " Category.");
             }
+
             WebCommunication.DownLoad_Category_File();
+
             // for debug
             if (Global.DEBUG_FLAG > 0)
             {
                 MessageBox.Show("All Category file are downloaded.");
+            }
+        }
+
+        private void ProductButton_Click(object sender, EventArgs e)
+        {
+            WebCommunication.Get_Product();
+
+            // for debug
+            if (Global.DEBUG_FLAG > 0)
+            {
+                MessageBox.Show("There are " + Global.atProductInfo.Length.ToString() + " Product.");
             }
         }
     }
