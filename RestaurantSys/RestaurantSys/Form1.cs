@@ -144,20 +144,20 @@ namespace RestaurantSys
 
         private void organizerNO_Button_Click(object sender, EventArgs e)
         {
-            WebCommunication.GetSessionID();
-            WebCommunication.GetOrganizerNO();
+            RealtouchBoard.GetSessionID();
+            RealtouchBoard.GetOrganizerNO();
         }
 
         private void NewsListButton_Click(object sender, EventArgs e)
         {
-            WebCommunication.GetSystemID();
+            RealtouchBoard.GetSystemID();
         }
 
         private void NewsContentButton_Click(object sender, EventArgs e)
         {
-            WebCommunication.GetAD_Content();
+            RealtouchBoard.GetAD_Content();
 
-            WebCommunication.DownLoad_AD_File();
+            RealtouchBoard.DownLoad_AD_File();
 
             // for debug
             if (Global.DEBUG_FLAG > 0)
@@ -171,13 +171,13 @@ namespace RestaurantSys
             // Global.DEBUG_FLAG = 1;
 
             // step 1: 取得 SystemID >> keyword = "ADEBOARD" 的輪播 systemID
-            WebCommunication.GetSystemID();
+            RealtouchBoard.GetSystemID();
 
             // step 2: 取得輪播內容
-            WebCommunication.GetAD_Content();
+            RealtouchBoard.GetAD_Content();
 
             // step 3: 下載所有輪播檔案 並將輪播廣告加入撥放清單
-            WebCommunication.DownLoad_AD_File();
+            RealtouchBoard.DownLoad_AD_File();
 
             // for debug
             if (Global.DEBUG_FLAG > 0)
@@ -200,7 +200,7 @@ namespace RestaurantSys
 
 
             // step 4: 取得產品分類內容
-            WebCommunication.Get_CategoryContent();
+            RealtouchBoard.Get_CategoryContent();
 
             // for debug
             if (Global.DEBUG_FLAG > 0)
@@ -209,7 +209,7 @@ namespace RestaurantSys
             }
 
             // step 4: 下載產品分類內容相關檔案
-            WebCommunication.DownLoad_Category_File();
+            RealtouchBoard.DownLoad_Category_File();
             
             // for debug
             if (Global.DEBUG_FLAG > 0)
@@ -220,7 +220,7 @@ namespace RestaurantSys
 
         private void CategoryButton_Click(object sender, EventArgs e)
         {
-            WebCommunication.Get_CategoryContent();
+            RealtouchBoard.Get_CategoryContent();
 
             // for debug
             if (Global.DEBUG_FLAG > 0)
@@ -228,7 +228,7 @@ namespace RestaurantSys
                 MessageBox.Show("There are " + Global.atCategoryInfo.Length.ToString() + " Category.");
             }
 
-            WebCommunication.DownLoad_Category_File();
+            RealtouchBoard.DownLoad_Category_File();
 
             // for debug
             if (Global.DEBUG_FLAG > 0)
@@ -239,7 +239,7 @@ namespace RestaurantSys
 
         private void ProductButton_Click(object sender, EventArgs e)
         {
-            WebCommunication.Get_Product();
+            RealtouchBoard.Get_Product();
 
             // for debug
             if (Global.DEBUG_FLAG > 0)
