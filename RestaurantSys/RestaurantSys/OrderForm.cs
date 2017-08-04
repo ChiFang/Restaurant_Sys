@@ -10,26 +10,24 @@ using System.Windows.Forms;
 
 namespace RestaurantSys
 {
-    public partial class Form2 : Form
+    public partial class OrderForm : Form
     {
-        public Form2()
+        public OrderForm()
         {
             InitializeComponent();
 
             // 測試用 產生N個按鈕 EX: 20
-            GenButton(MainMenuPanel, 20, 100, MainMenuPanel.Size.Height-20);
+            GenButton(MainPanel, 20, 100, MainPanel.Size.Height - 20);
 
-            GenButton(panel1, 10, 50, MainMenuPanel.Size.Height - 20, false);
-
-
+            GenButton(DisplayPanel, 10, 100, MainPanel.Size.Height - 20, false);
         }
 
-        private void Form2_Load(object sender, EventArgs e)
+        private void BillButton_Click(object sender, EventArgs e)
         {
-            
+
         }
 
-        private void GenButton(Panel a_panel, int a_ButtomNum, int a_BtnWidth =100, int a_BtnHeight = 30, bool a_Mode = true)
+        private void GenButton(Panel a_panel, int a_ButtomNum, int a_BtnWidth = 100, int a_BtnHeight = 30, bool a_Mode = true)
         {
             int WidthLimit = a_panel.Size.Width;
             int HeightLimit = a_panel.Size.Height;
@@ -42,7 +40,7 @@ namespace RestaurantSys
                 btn.Width = a_BtnWidth;
                 btn.Height = a_BtnHeight;
 
-                if(a_Mode)
+                if (a_Mode)
                 {
                     btn.Left = a_BtnWidth * i;
                     btn.Top = 0;
@@ -51,20 +49,20 @@ namespace RestaurantSys
                 }
                 else
                 {
-                    if(a_BtnWidth * ColIndex >= WidthLimit)
+                    if (a_BtnWidth * ColIndex >= WidthLimit)
                     {
                         ColIndex = 0;
                         RowIndex++;
                     }
 
                     btn.Left = a_BtnWidth * ColIndex;
-                    btn.Top = RowIndex* a_BtnHeight;
+                    btn.Top = RowIndex * a_BtnHeight;
                     btn.Text = i.ToString();
                     btn.Click += new EventHandler(DetailMenuClick);
 
                     ColIndex++;
                 }
-                
+
             }
         }
 
@@ -76,6 +74,11 @@ namespace RestaurantSys
         private void DetailMenuClick(object sender, EventArgs e)
         {
             MessageBox.Show(((Button)sender).Text);
+        }
+
+        private void MainMenuPanel_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

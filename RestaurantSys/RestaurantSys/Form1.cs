@@ -124,10 +124,10 @@ namespace RestaurantSys
 
         private void OrderButton_Click(object sender, EventArgs e)
         {
-            Form2 frm = new Form2();
+            OrderForm frm = new OrderForm();
             // frm.Show();
 
-            //設定Form2為Form1的上層，並開啟Form2視窗。由於在Form1的程式碼內使用this，所以this為Form1的物件本身
+            //設定 OrderForm 為Form1的上層，並開啟 OrderForm 視窗。由於在Form1的程式碼內使用this，所以this為Form1的物件本身
             frm.ShowDialog(this);
         }
 
@@ -183,7 +183,13 @@ namespace RestaurantSys
 
         private void LogIn_Click(object sender, EventArgs e)
         {
-            WebCommunication.GetSessionID();
+            // WebCommunication.GetSessionID();
+
+            LogInFrom frm = new LogInFrom();
+            // frm.Show();
+
+            //設定 LogInFrom 為Form1的上層，並開啟Form2視窗。由於在Form1的程式碼內使用this，所以this為Form1的物件本身
+            frm.ShowDialog(this);
         }
 
         private void organizerNO_Button_Click(object sender, EventArgs e)

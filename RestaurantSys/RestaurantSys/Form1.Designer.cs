@@ -55,7 +55,7 @@
             // 
             this.AdRotator.Location = new System.Drawing.Point(12, 12);
             this.AdRotator.Name = "AdRotator";
-            this.AdRotator.Size = new System.Drawing.Size(371, 241);
+            this.AdRotator.Size = new System.Drawing.Size(371, 541);
             this.AdRotator.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.AdRotator.TabIndex = 0;
             this.AdRotator.TabStop = false;
@@ -120,7 +120,7 @@
             // 
             // OrderButton
             // 
-            this.OrderButton.Location = new System.Drawing.Point(160, 358);
+            this.OrderButton.Location = new System.Drawing.Point(118, 569);
             this.OrderButton.Name = "OrderButton";
             this.OrderButton.Size = new System.Drawing.Size(137, 29);
             this.OrderButton.TabIndex = 6;
@@ -231,7 +231,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(633, 399);
+            this.ClientSize = new System.Drawing.Size(633, 610);
             this.Controls.Add(this.TestPanel);
             this.Controls.Add(this.OrderButton);
             this.Controls.Add(this.AdRotator);
