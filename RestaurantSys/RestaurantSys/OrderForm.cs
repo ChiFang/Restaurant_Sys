@@ -16,9 +16,11 @@ namespace RestaurantSys
         {
             InitializeComponent();
 
-            // 測試用 產生N個按鈕 EX: 20
-            GenButton(MainPanel, 20, 100, MainPanel.Size.Height - 20);
 
+            // 測試用 產生N個按鈕 EX: 20
+            GenButton(MainPanel, Global.atCategoryInfo.Length, 100, MainPanel.Size.Height - 20);
+
+            // 測試用 產生N個按鈕 EX: 10
             GenButton(DisplayPanel, 10, 100, MainPanel.Size.Height - 20, false);
         }
 
@@ -44,7 +46,9 @@ namespace RestaurantSys
                 {
                     btn.Left = a_BtnWidth * i;
                     btn.Top = 0;
-                    btn.Text = i.ToString();
+                    // btn.Text = i.ToString();
+                    btn.Text = Global.atCategoryInfo[i].categoryName;
+                    
                     btn.Click += new EventHandler(MainMenuClick);
                 }
                 else
@@ -79,6 +83,12 @@ namespace RestaurantSys
         private void MainMenuPanel_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void CancelButton_Click(object sender, EventArgs e)
+        {
+            // close its form after select
+            ((Button)sender).FindForm().Close();
         }
     }
 }

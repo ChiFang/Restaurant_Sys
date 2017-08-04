@@ -33,7 +33,8 @@ namespace RestaurantSys
 
         private void CancelButton_Click(object sender, EventArgs e)
         {
-            this.Close();
+            // close its form after select
+            ((Button)sender).FindForm().Close();
         }
     }
 }

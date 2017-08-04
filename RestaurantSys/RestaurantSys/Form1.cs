@@ -131,56 +131,6 @@ namespace RestaurantSys
             frm.ShowDialog(this);
         }
 
-
-        private async void LogInButton_ClickAsync(object sender, EventArgs e)
-        {
-            string POST = "http://dev.realtouchapp.com/api/v1/windows/zh-Hant/login";
-            string system = "realtouchapp";
-            string account = "ismyaki@gmail.com";
-            string password = "123456";
-            // string password = "123";
-
-            #region HttpClient
-            // Available in: .NET Framework 4.5+, .NET Standard 1.1+, .NET Core 1.0+
-
-            var PostParams = new Dictionary<string, string>
-            {
-               { "system", system },
-               { "account", account },
-                { "password", password }
-            };
-
-            var content = new FormUrlEncodedContent(PostParams);
-            var response = await client.PostAsync(POST, content);
-            var StatusCodeString = response.StatusCode.ToString();
-            var StatusCode = response.StatusCode.GetHashCode();
-
-            if (response.StatusCode == HttpStatusCode.OK)
-            {   // 成功才開始後續動作
-                var responseString = response.Content.ReadAsStringAsync().Result;
-                var JasonString = JsonConvert.DeserializeObject(responseString);
-
-                MessageBox.Show(responseString);
-                MessageBox.Show(JasonString.ToString());
-
-                dynamic json = JValue.Parse(JasonString.ToString());
-
-                // values require casting
-                string name = json.name;
-                string sessionID = json.sessionID;
-                Global.SessionID = sessionID;
-
-
-
-            }
-            else
-            {   // 可編寫錯誤動作
-
-            }
-            #endregion
-        }
-
-
         private void LogIn_Click(object sender, EventArgs e)
         {
             // WebCommunication.GetSessionID();
@@ -226,13 +176,45 @@ namespace RestaurantSys
             // step 2: 取得輪播內容
             WebCommunication.GetAD_Content();
 
-            // step 3: 下載所有輪播檔案
+            // step 3: 下載所有輪播檔案 並將輪播廣告加入撥放清單
             WebCommunication.DownLoad_AD_File();
 
             // for debug
             if (Global.DEBUG_FLAG > 0)
             {
                 MessageBox.Show("All AD file are downloaded.");
+            }
+
+            // start to download all ad element
+            for (int cnt = 0; cnt < Global.atAD_ContentInfo.Length; cnt++)
+            {
+                string TempADName = Global.TempDatadirPath + Global.atAD_ContentInfo[cnt].name + Global.atAD_ContentInfo[cnt].FilenameExtension;
+                AdListBox.Items.Add(TempADName);
+            }
+
+            // for debug
+            if (Global.DEBUG_FLAG > 0)
+            {
+                MessageBox.Show("All AD file are added in play list.");
+            }
+
+
+            // step 4: 取得產品分類內容
+            WebCommunication.Get_CategoryContent();
+
+            // for debug
+            if (Global.DEBUG_FLAG > 0)
+            {
+                MessageBox.Show("There are " + Global.atCategoryInfo.Length.ToString() + " Category.");
+            }
+
+            // step 4: 下載產品分類內容相關檔案
+            WebCommunication.DownLoad_Category_File();
+            
+            // for debug
+            if (Global.DEBUG_FLAG > 0)
+            {
+                MessageBox.Show("All Category file are downloaded.");
             }
         }
 
@@ -254,7 +236,4 @@ namespace RestaurantSys
         }
     }
 
-    
-
-    
 }

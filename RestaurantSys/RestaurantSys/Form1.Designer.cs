@@ -39,14 +39,13 @@
             this.SetButton = new System.Windows.Forms.Button();
             this.OrderButton = new System.Windows.Forms.Button();
             this.TestPanel = new System.Windows.Forms.Panel();
+            this.ProductButton = new System.Windows.Forms.Button();
+            this.CategoryButton = new System.Windows.Forms.Button();
             this.DownloadButton = new System.Windows.Forms.Button();
             this.NewsContentButton = new System.Windows.Forms.Button();
             this.NewsListButton = new System.Windows.Forms.Button();
             this.organizerNO_Button = new System.Windows.Forms.Button();
             this.LogIn = new System.Windows.Forms.Button();
-            this.LogInButton = new System.Windows.Forms.Button();
-            this.CategoryButton = new System.Windows.Forms.Button();
-            this.ProductButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.AdRotator)).BeginInit();
             this.TestPanel.SuspendLayout();
             this.SuspendLayout();
@@ -137,7 +136,6 @@
             this.TestPanel.Controls.Add(this.NewsListButton);
             this.TestPanel.Controls.Add(this.organizerNO_Button);
             this.TestPanel.Controls.Add(this.LogIn);
-            this.TestPanel.Controls.Add(this.LogInButton);
             this.TestPanel.Controls.Add(this.AdListBox);
             this.TestPanel.Controls.Add(this.AddButton);
             this.TestPanel.Controls.Add(this.SetButton);
@@ -147,6 +145,25 @@
             this.TestPanel.Name = "TestPanel";
             this.TestPanel.Size = new System.Drawing.Size(226, 341);
             this.TestPanel.TabIndex = 7;
+            // 
+            // ProductButton
+            // 
+            this.ProductButton.Location = new System.Drawing.Point(117, 302);
+            this.ProductButton.Name = "ProductButton";
+            this.ProductButton.Size = new System.Drawing.Size(75, 23);
+            this.ProductButton.TabIndex = 14;
+            this.ProductButton.Text = "Product";
+            this.ProductButton.UseVisualStyleBackColor = true;
+            // 
+            // CategoryButton
+            // 
+            this.CategoryButton.Location = new System.Drawing.Point(117, 273);
+            this.CategoryButton.Name = "CategoryButton";
+            this.CategoryButton.Size = new System.Drawing.Size(75, 23);
+            this.CategoryButton.TabIndex = 13;
+            this.CategoryButton.Text = "Category";
+            this.CategoryButton.UseVisualStyleBackColor = true;
+            this.CategoryButton.Click += new System.EventHandler(this.CategoryButton_Click);
             // 
             // DownloadButton
             // 
@@ -198,35 +215,6 @@
             this.LogIn.UseVisualStyleBackColor = true;
             this.LogIn.Click += new System.EventHandler(this.LogIn_Click);
             // 
-            // LogInButton
-            // 
-            this.LogInButton.Location = new System.Drawing.Point(36, 244);
-            this.LogInButton.Name = "LogInButton";
-            this.LogInButton.Size = new System.Drawing.Size(75, 23);
-            this.LogInButton.TabIndex = 6;
-            this.LogInButton.Text = "LogIn_old";
-            this.LogInButton.UseVisualStyleBackColor = true;
-            this.LogInButton.Click += new System.EventHandler(this.LogInButton_ClickAsync);
-            // 
-            // CategoryButton
-            // 
-            this.CategoryButton.Location = new System.Drawing.Point(117, 273);
-            this.CategoryButton.Name = "CategoryButton";
-            this.CategoryButton.Size = new System.Drawing.Size(75, 23);
-            this.CategoryButton.TabIndex = 13;
-            this.CategoryButton.Text = "Category";
-            this.CategoryButton.UseVisualStyleBackColor = true;
-            this.CategoryButton.Click += new System.EventHandler(this.CategoryButton_Click);
-            // 
-            // ProductButton
-            // 
-            this.ProductButton.Location = new System.Drawing.Point(117, 302);
-            this.ProductButton.Name = "ProductButton";
-            this.ProductButton.Size = new System.Drawing.Size(75, 23);
-            this.ProductButton.TabIndex = 14;
-            this.ProductButton.Text = "Product";
-            this.ProductButton.UseVisualStyleBackColor = true;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -256,7 +244,6 @@
         private System.Windows.Forms.Button SetButton;
         private System.Windows.Forms.Button OrderButton;
         private System.Windows.Forms.Panel TestPanel;
-        private System.Windows.Forms.Button LogInButton;
         private System.Windows.Forms.Button LogIn;
         private System.Windows.Forms.Button organizerNO_Button;
         private System.Windows.Forms.Button NewsListButton;

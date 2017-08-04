@@ -92,7 +92,7 @@ namespace RestaurantSys
         public static CategoryInfo[] atCategoryInfo = null;
         public static string TempDatadirPath = Application.StartupPath + @"\temp_file\";
 
-        public static int DEBUG_FLAG = 2;
+        public static int DEBUG_FLAG = 1;
 
         // by user input
         public static string System = "realtouchapp";
@@ -441,14 +441,19 @@ namespace RestaurantSys
         public static void DownLoad_AD_File()
         {   // 這裡必須確定廣告資料都已載入
 
+            // 建立檔案串流（@ 可取消跳脫字元 escape sequence） for log
+            StreamWriter sw = new StreamWriter(Global.TempDatadirPath + @"AD_PlayList_Log.txt");
+
             // start to download all ad element
             for (int cnt = 0; cnt < Global.atAD_ContentInfo.Length; cnt++)
             {
-                DownloadFile
-                    (Global.atAD_ContentInfo[cnt].URL,
-                    Global.TempDatadirPath + Global.atAD_ContentInfo[cnt].name + Global.atAD_ContentInfo[cnt].FilenameExtension
-                    );
+                string TempADName = Global.TempDatadirPath + Global.atAD_ContentInfo[cnt].name + Global.atAD_ContentInfo[cnt].FilenameExtension;
+                DownloadFile(Global.atAD_ContentInfo[cnt].URL, TempADName);
+                sw.WriteLine(TempADName); // 寫入文字
+                
             }
+
+            sw.Close(); // 關閉串流
         }
 
         private static bool IsMovie(JToken a_JItem)
