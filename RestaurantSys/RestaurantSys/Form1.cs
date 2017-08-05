@@ -229,6 +229,9 @@ namespace RestaurantSys
                 MessageBox.Show("There are " + Global.atCategoryInfo.Length.ToString() + " Category.");
             }
 
+            // for test and debug
+            Global.atCategoryInfoHierarchical = RealtouchBoard.MakeCategoryInfoHierarchical_two_layer_one_parentID(Global.atCategoryInfo);
+
             RealtouchBoard.DownLoad_Category_File();
 
             // for debug

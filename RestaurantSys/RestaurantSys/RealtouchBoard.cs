@@ -75,6 +75,8 @@ namespace RestaurantSys
         public string categoryImage;
         public string categoryImageThumb;
 
+        public CategoryInfo[] SubCategory; // for 巢狀分類
+
 
         /// <summary> reset coordinate </summary>
         public void Init()
@@ -128,6 +130,7 @@ namespace RestaurantSys
         public static int AdtimerIntervalBuffer = 0;
         public static ADInfo[] atAD_ContentInfo = null;
         public static CategoryInfo[] atCategoryInfo = null;
+        public static CategoryInfo[] atCategoryInfoHierarchical = null;
         public static ProductInfo[] atProductInfo = null;
         public static string TempDatadirPath = Application.StartupPath + @"\temp_file\";
 
@@ -548,17 +551,58 @@ namespace RestaurantSys
             #endregion
 
             // sort array by "Sort" element
-            Array.Sort(Global.atCategoryInfo, delegate (CategoryInfo item1, CategoryInfo item2)
-            {
-                return item1.Sort.CompareTo(item2.Sort); // (user1.Sort - user2.Sort)
-            });
+            //Array.Sort(Global.atCategoryInfo, delegate (CategoryInfo item1, CategoryInfo item2)
+            //{
+            //    return item1.Sort.CompareTo(item2.Sort); // (user1.Sort - user2.Sort)
+            //});
         }
 
-        private static CategoryInfo[] MakeCategoryInfoHierarchical(CategoryInfo[] a_atCategoryInfo)
-        {
+        public static CategoryInfo[] MakeCategoryInfoHierarchical_two_layer_one_parentID(CategoryInfo[] a_atCategoryInfo)
+        {   // 概念是從最底層往上接
             CategoryInfo[] atCategoryInfoModified = null;
 
-            atCategoryInfoModified = Global.atCategoryInfo;
+            List<CategoryInfo> List = new List<CategoryInfo>(Global.atCategoryInfo);
+
+
+            int IndexTmp_1 = List.FindIndex(x => x.categoryName == "湯品");
+            IndexTmp_1 = List.FindIndex(x => x.categoryID == "397");
+
+
+            for (int cnt = 0; cnt < List.Count; cnt++)
+            {
+                // List[cnt].parentID = "wwww";
+                if (List[cnt].parentID != "0")
+                {   // 表示不是最上層
+
+                    // 找出他的所屬的主類別 index
+                    int IndexTmp = List.FindIndex(x => x.categoryID == List[cnt].parentID);
+
+                    // 將目前的類別加入其所屬類別
+                    List<CategoryInfo> ListTmp = null;
+                    if (List[IndexTmp].SubCategory == null)
+                    {   
+                        ListTmp = new List<CategoryInfo>(); // 所屬的主類別的子類別暫時為空的 >> 創建
+                    }
+                    else
+                    {
+                        ListTmp = new List<CategoryInfo>(List[IndexTmp].SubCategory); // 將主類別的子類別轉成list
+                    }
+                    ListTmp.Add(List[cnt]);                                                     // 將當前類別加入 所屬主類別的子類別 list
+                    CategoryInfo TmpSwap = List[IndexTmp];                                           // list不能修改內容 只好用個結構暫存
+                    TmpSwap.SubCategory = ListTmp.ToArray();                                    // 改變其子類別    
+                    List.RemoveAt(IndexTmp);                                                    // 刪除原本主類別
+                    List.Insert(IndexTmp, TmpSwap);                                             // 加入子類別已被更新的主類別
+
+                    // 目前類別已被加入其他類別的子類別 所以要刪除
+                    List.RemoveAt(cnt);
+
+                    cnt--; // 因為刪除當前的類別 所以下一個類別會變成目前的
+
+                }
+            }
+
+
+            atCategoryInfoModified = List.ToArray();
 
 
             return atCategoryInfoModified;
