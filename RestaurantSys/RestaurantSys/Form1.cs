@@ -155,28 +155,48 @@ namespace RestaurantSys
 
         private void NewsContentButton_Click(object sender, EventArgs e)
         {
-            RealtouchBoard.GetAD_Content();
-
-            RealtouchBoard.DownLoad_AD_File();
-
-            // for debug
-            if (Global.DEBUG_FLAG > 0)
-            {
-                MessageBox.Show("All AD file are downloaded.");
-            }
+            SetADContentFileAndSetPlayList();
         }
 
         private void DownloadButton_Click(object sender, EventArgs e)
         {
             // Global.DEBUG_FLAG = 1;
 
+            // step 1: 取得廣告資訊與檔案
+            SetADInfoAndFile();
+
+            // step 2: 取得產品分類資訊與檔案
+            SetCategoryInfoAndFile();
+
+            // step 3: 取得產品資訊與檔案
+            SetProductInfoAndFile();
+        }
+
+        private void CategoryButton_Click(object sender, EventArgs e)
+        {
+            SetCategoryInfoAndFile();
+        }
+
+        private void ProductButton_Click(object sender, EventArgs e)
+        {
+            SetProductInfoAndFile();
+        }
+
+        private void SetADInfoAndFile()
+        {
             // step 1: 取得 SystemID >> keyword = "ADEBOARD" 的輪播 systemID
             RealtouchBoard.GetSystemID();
 
-            // step 2: 取得輪播內容
+            // step 2: 取得輪播內容、檔案 & 加入撥放清單
+            SetADContentFileAndSetPlayList();
+        }
+
+        private void SetADContentFileAndSetPlayList()
+        {
+            // 取得輪播內容
             RealtouchBoard.GetAD_Content();
 
-            // step 3: 下載所有輪播檔案 並將輪播廣告加入撥放清單
+            // 下載所有輪播檔案 並將輪播廣告加入撥放清單
             RealtouchBoard.DownLoad_AD_File();
 
             // for debug
@@ -185,7 +205,7 @@ namespace RestaurantSys
                 MessageBox.Show("All AD file are downloaded.");
             }
 
-            // start to download all ad element
+            // add to play list
             for (int cnt = 0; cnt < Global.atAD_ContentInfo.Length; cnt++)
             {
                 string TempADName = Global.TempDatadirPath + Global.atAD_ContentInfo[cnt].name + Global.atAD_ContentInfo[cnt].FilenameExtension;
@@ -197,28 +217,9 @@ namespace RestaurantSys
             {
                 MessageBox.Show("All AD file are added in play list.");
             }
-
-
-            // step 4: 取得產品分類內容
-            RealtouchBoard.Get_CategoryContent();
-
-            // for debug
-            if (Global.DEBUG_FLAG > 0)
-            {
-                MessageBox.Show("There are " + Global.atCategoryInfo.Length.ToString() + " Category.");
-            }
-
-            // step 4: 下載產品分類內容相關檔案
-            RealtouchBoard.DownLoad_Category_File();
-            
-            // for debug
-            if (Global.DEBUG_FLAG > 0)
-            {
-                MessageBox.Show("All Category file are downloaded.");
-            }
         }
 
-        private void CategoryButton_Click(object sender, EventArgs e)
+        private void SetCategoryInfoAndFile()
         {
             RealtouchBoard.Get_CategoryContent();
 
@@ -237,7 +238,7 @@ namespace RestaurantSys
             }
         }
 
-        private void ProductButton_Click(object sender, EventArgs e)
+        private void SetProductInfoAndFile()
         {
             RealtouchBoard.Get_Product();
 
@@ -245,6 +246,14 @@ namespace RestaurantSys
             if (Global.DEBUG_FLAG > 0)
             {
                 MessageBox.Show("There are " + Global.atProductInfo.Length.ToString() + " Product.");
+            }
+
+            RealtouchBoard.DownLoad_Product_File();
+
+            // for debug
+            if (Global.DEBUG_FLAG > 0)
+            {
+                MessageBox.Show("All Product file are downloaded.");
             }
         }
     }

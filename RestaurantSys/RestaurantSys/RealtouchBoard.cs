@@ -87,10 +87,6 @@ namespace RestaurantSys
     /// <summary>  Product info </summary>
     public struct ProductInfo
     {
-        public int Sort;
-        public double service;
-        public double discount;
-
         public string type;
         public string productType;
         public string productID;
@@ -101,6 +97,21 @@ namespace RestaurantSys
         public string isCurrentPrice;
         public string commission;
         public string note;
+
+        public string content;
+        public string[] category;
+        public string productSort;
+        public string specSort;
+        public string redeemedPoint;
+        public string barcode;
+        public double oriPrice;
+        public double price;
+        public string productImage;
+        public string productImageThumb;
+        public string combine;
+        public string mark;
+        
+        public string DefaultOption;
 
 
         /// <summary> reset coordinate </summary>
@@ -543,6 +554,16 @@ namespace RestaurantSys
             });
         }
 
+        private static CategoryInfo[] MakeCategoryInfoHierarchical(CategoryInfo[] a_atCategoryInfo)
+        {
+            CategoryInfo[] atCategoryInfoModified = null;
+
+            atCategoryInfoModified = Global.atCategoryInfo;
+
+
+            return atCategoryInfoModified;
+        }
+
         public static void Get_Product()
         {   // 這裡必須確定"SessionID"&"organizerNO"都已設定好了
 
@@ -580,8 +601,80 @@ namespace RestaurantSys
             for (int cnt = 0; cnt < cnt_JList; cnt++)
             {
                 var JItem = JList[cnt];
+                Global.atProductInfo[cnt].type = JItem.SelectToken("type").ToString();
+                Global.atProductInfo[cnt].productType = JItem.SelectToken("productType").ToString();
+                Global.atProductInfo[cnt].productID = JItem.SelectToken("productID").ToString();
+                Global.atProductInfo[cnt].productName = JItem.SelectToken("productName").ToString();
+                // Global.atProductInfo[cnt].productForeignName = JItem.SelectToken("productForeignName").ToString();
+                Global.atProductInfo[cnt].productShortName = JItem.SelectToken("productShortName").ToString();
+                Global.atProductInfo[cnt].commission = JItem.SelectToken("commission").ToString();
+                Global.atProductInfo[cnt].note = JItem.SelectToken("note").ToString();
+                Global.atProductInfo[cnt].content = JItem.SelectToken("content").ToString();
+
+                // category is a list
+                var CategoryList = JItem.SelectToken("category").ToList();
+                long cnt_CategoryList = CategoryList.LongCount();
+                Global.atProductInfo[cnt].category = new string[cnt_CategoryList];
+                for(int CntTmp = 0; CntTmp < cnt_CategoryList; CntTmp++)
+                {
+                    Global.atProductInfo[cnt].category[CntTmp] = CategoryList[CntTmp].ToString();
+                }
+
+                Global.atProductInfo[cnt].productSort = JItem.SelectToken("productSort").ToString();
+                Global.atProductInfo[cnt].specSort = JItem.SelectToken("specSort").ToString();
+                Global.atProductInfo[cnt].redeemedPoint = JItem.SelectToken("redeemedPoint").ToString();
+                Global.atProductInfo[cnt].barcode = JItem.SelectToken("barcode").ToString();
+
+                Global.atProductInfo[cnt].oriPrice = Convert.ToDouble(JItem.SelectToken("oriPrice").ToString());
+                Global.atProductInfo[cnt].price = Convert.ToDouble(JItem.SelectToken("price").ToString());
+
+                // Global.atProductInfo[cnt].combine = JItem.SelectToken("combine").ToString(); // 不一定有 要另外處裡
+                Global.atProductInfo[cnt].mark = JItem.SelectToken("mark").ToString();
+                // Global.atProductInfo[cnt].DefaultOption = JItem.SelectToken("default").ToString(); // 不一定有 要另外處裡
+
+                var ImageList = JItem.SelectToken("image"); // ImageList 會是個array
+                // var TmpData = ImageList[0].SelectToken("productImage");
+
+                if(ImageList.Children().Count() == 0)
+                {   // 表示沒有網址... 連空字串都不是.....ORZ
+                    Global.atProductInfo[cnt].productImage = "";
+                    Global.atProductInfo[cnt].productImageThumb = "";
+                }
+                else
+                {
+                    Global.atProductInfo[cnt].productImage = ImageList[0].SelectToken("productImage").ToString();
+                    Global.atProductInfo[cnt].productImageThumb = ImageList[0].SelectToken("productImageThumb").ToString();
+                }
+
             }
             #endregion
+        }
+
+        public static void DownLoad_Product_File()
+        {   // 這裡必須確定 Product 資料都已載入
+
+            // start to download all ad element
+            for (int cnt = 0; cnt < Global.atProductInfo.Length; cnt++)
+            {
+                if (Global.atProductInfo[cnt].productImage != "" && Global.atProductInfo[cnt].productImageThumb != "")
+                {
+                    WebCommunication.DownloadFile
+                        (Global.atProductInfo[cnt].productImage,
+                        Global.TempDatadirPath + Global.atProductInfo[cnt].productName + ".jpg"
+                        );
+
+                    WebCommunication.DownloadFile
+                        (Global.atProductInfo[cnt].productImageThumb,
+                        Global.TempDatadirPath + Global.atProductInfo[cnt].productName + "Thumb.jpg"
+                        );
+                }
+                else
+                {
+                    MessageBox.Show("Product " + cnt.ToString() + " URL is null");
+                }
+
+                Console.WriteLine("Product {0} already download.", cnt);
+            }
         }
 
         public static void DownLoad_Category_File()
