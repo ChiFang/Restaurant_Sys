@@ -19,6 +19,11 @@ namespace RestaurantSys
 {
     class WebCommunication
     {
+        /// <summary>
+        /// 利用POST像網頁取得資訊
+        /// </summary>
+        /// <param name="a_URL">[IN] 網頁 URL</param>
+        /// <param name="a_Params">[IN] 輸入參數</param>
         public static string POST_GrapInfo(string a_URL, string a_Params)
         {   // HttpWebRequest Method 
             string Result = "";
@@ -70,6 +75,12 @@ namespace RestaurantSys
             return Result;
         }
 
+
+        /// <summary>
+        /// 從網路下載檔案
+        /// </summary>
+        /// <param name="a_RemoteURL">[IN] 網頁 URL</param>
+        /// <param name="a_FileName">[IN] 檔案名稱(包含路徑)</param>
         public static void DownloadFile(string a_RemoteURL, string a_FileName)
         {
             // Create a new WebClient instance.

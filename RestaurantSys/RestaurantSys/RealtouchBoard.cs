@@ -25,6 +25,9 @@ using Newtonsoft.Json.Linq;
 
 namespace RestaurantSys
 {
+
+    /// <summary> 
+    /// the enum of POST data type</summary>
     public enum POST_DATA_TYPE
     {
         LOGIN = 0,
@@ -35,21 +38,32 @@ namespace RestaurantSys
         PRODUCT = 5
     }
 
-    /// <summary> ad info </summary>
+    /// <summary> the struct of ad info </summary>
     public struct ADInfo
     {
+        /// <summary> 排序 </summary>
         public int Sort;
+
+        /// <summary> 0:新增   1:刪除 </summary>
         public string Type;
 
+        /// <summary> 圖片或影片網址 </summary>
         public string URL;
+
+        /// <summary> 縮圖網址 </summary>
         public string URLThumb;
+
+        /// <summary> 最新消息標題 </summary>
         public string name;
+
+        /// <summary> 最新消息ID </summary>
         public string newsID;
 
+        /// <summary> 副檔名: 區分圖片影片用 </summary>
         public string FilenameExtension;
 
 
-        /// <summary> reset coordinate </summary>
+        /// <summary> reset struct </summary>
         public void Init()
         {
             Sort = 0;
@@ -57,28 +71,50 @@ namespace RestaurantSys
         }
     }
 
-    /// <summary>  Category info </summary>
+    /// <summary>  the struct of  Category info </summary>
     public struct CategoryInfo
     {
+        /// <summary> 排序(數字越小排在前) </summary>
         public int Sort;
+
+        /// <summary> 服務費 </summary>
         public double service;
+
+        /// <summary> 打折折數 </summary>
         public double discount;
 
+        /// <summary> 0:新增   1:刪除 </summary>
         public string type;
+
+        /// <summary> 分類ID </summary>
         public string categoryID;
+
+        /// <summary> 分類名稱 </summary>
         public string categoryName;
+
+        /// <summary> 外語名稱 </summary>
         public string categoryForeignName;
+
+        /// <summary> 分類碼 </summary>
         public string code;
 
+        /// <summary> 父層分類ID(第一層為0) </summary>
         public string parentID;
+
+        /// <summary> 所有父層分類ID(第一層為空字串) </summary>
         public string parentIDs;
+
+        /// <summary> 分類圖片 </summary>
         public string categoryImage;
+
+        /// <summary> 分類圖片縮圖  </summary>
         public string categoryImageThumb;
 
-        public CategoryInfo[] SubCategory; // for 巢狀分類
+        /// <summary> 子分類陣列: for 巢狀分類 </summary>
+        public CategoryInfo[] SubCategory; 
 
 
-        /// <summary> reset coordinate </summary>
+        /// <summary> reset the struct </summary>
         public void Init()
         {
             Sort = 0;
@@ -86,74 +122,160 @@ namespace RestaurantSys
         }
     }
 
-    /// <summary>  Product info </summary>
+    /// <summary>  the struct of Product info </summary>
     public struct ProductInfo
     {
+        /// <summary> 0:新增   1:刪除 </summary>
         public string type;
+
+        /// <summary> 0:商品; 1:包裝 </summary>
         public string productType;
+
+        /// <summary> 商品規格ID(包裝ID) </summary>
         public string productID;
+
+        /// <summary> 商品名稱 </summary>
         public string productName;
+
+        /// <summary> 外文名稱 </summary>
         public string productForeignName;
 
+        /// <summary> 商品簡稱 </summary>
         public string productShortName;
+
+        /// <summary> 以時價計算 0:否 1:是 </summary>
         public string isCurrentPrice;
+
+        /// <summary> 外部公司抽成(%) </summary>
         public string commission;
+
+        /// <summary> 備註 </summary>
         public string note;
 
+        /// <summary> 說明(HTML) </summary>
         public string content;
+
+        /// <summary> 分類(Array) </summary>
         public string[] category;
+
+        /// <summary> 商品排序(主排序)(數字越小排在前) </summary>
         public string productSort;
+
+        /// <summary> 格排序(次排序)(數字越小排在前) </summary>
         public string specSort;
+
+        /// <summary> 折抵點數 </summary>
         public string redeemedPoint;
+
+        /// <summary> 條碼 </summary>
         public string barcode;
+
+        /// <summary> 商品原價  </summary>
         public double oriPrice;
+
+        /// <summary> 商品價錢 </summary>
         public double price;
+
+        /// <summary> 商品圖片 </summary>
         public string productImage;
+
+        /// <summary> 商品圖片縮圖 </summary>
         public string productImageThumb;
+
+        /// <summary> 商品組合(字串all或是Array) </summary>
         public string combine;
+
+        /// <summary> 商品註記(Array) </summary>
         public string mark;
-        
+
+        /// <summary> 預設選項 </summary>
         public string DefaultOption;
 
 
-        /// <summary> reset coordinate </summary>
+        /// <summary> reset the struct </summary>
         public void Init()
         {
 
         }
     }
 
+    /// <summary>  the class for Global variable or function </summary>
     public class Global
     {   // 這裡擺放全域變數以供表單間溝通或是static變數需求
+
+        #region ForCoding
+        /// <summary> 是否在輪播影片 </summary>
         public static bool bPlayingVideo = false;
+
+        /// <summary> emguCV 抓取影片的結構 </summary>
         public static Capture AdFrameGrabber;
+
+        /// <summary> 輪播時間間隔暫存: 撥放影片時間隔得是 1/fps 所以要暫存下來 </summary>
         public static int AdtimerIntervalBuffer = 0;
+
+        /// <summary> 廣告輪播清單 </summary>
         public static ADInfo[] atAD_ContentInfo = null;
+
+        /// <summary> 產品分類清單 </summary>
         public static CategoryInfo[] atCategoryInfo = null;
+
+        /// <summary> 產品分類清單: 階層化後 </summary>
         public static CategoryInfo[] atCategoryInfoHierarchical = null;
+
+        /// <summary> 產品清單 </summary>
         public static ProductInfo[] atProductInfo = null;
+
+        /// <summary> 程式暫存檔案路徑 </summary>
         public static string TempDatadirPath = Application.StartupPath + @"\temp_file\";
 
+        /// <summary> Ddbug flag </summary>
         public static int DEBUG_FLAG = 1;
+        #endregion
 
-        // by user input
+        #region UserInput
+        /// <summary> 系統名稱 </summary>
         public static string System = "realtouchapp";
+
+        /// <summary> 帳號 </summary>
         public static string Account = "ismyaki@gmail.com";
+
+        /// <summary> 密碼 </summary>
         public static string Password = "123456";
+        #endregion
 
-        // by Web
+        #region ByWeb
+        /// <summary> 驗證身份用，代表有效登入，之後要資料需一起傳到後台 </summary>
         public static string SessionID = "";
-        public static string organizerNO = "";
-        public static string systemID = "";
 
-        // const
+        /// <summary> 廠商編號 </summary>
+        public static string organizerNO = "";
+
+        /// <summary> systemID: 尋找keyword = "ADEBOARD" 的輪播 systemID </summary>
+        public static string systemID = "";
+        #endregion
+
+        #region ConstVariable
+        /// <summary> systemID: 尋找keyword = "ADEBOARD" 的輪播 systemID </summary>
         public const string ADKEYWORD = "ADEBOARD";
+
+        /// <summary> 登入網址 </summary>
         public const string URL_LogIn = "http://dev.realtouchapp.com/api/v1/windows/zh-Hant/login";
+
+        /// <summary> 廠商編號網址 </summary>
         public const string URL_OrganizerNO = "http://dev.realtouchapp.com/api/v1/windows/zh-Hant/realtouch/getName";
+
+        /// <summary> 消息清單網址 </summary>
         public const string URL_NewsList = "http://dev.realtouchapp.com/api/business/v1/windows/zh-Hant/info/news/system";
+
+        /// <summary> 消息內容網址 </summary>
         public const string URL_NewsContent = "http://dev.realtouchapp.com/api/business/v1/windows/zh-Hant/info/news/list";
+
+        /// <summary> 產品分類網址 </summary>
         public const string URL_CategoryList = "http://dev.realtouchapp.com/api/business/v1/windows/zh-Hant/product/category/list";
+
+        /// <summary> 產品網址 </summary>
         public const string URL_ProductList = "http://dev.realtouchapp.com/api/business/v1/windows/zh-Hant/product/product/list";
+        #endregion
 
 
         public void DetailMenuClick(object sender, EventArgs e)
@@ -202,8 +324,15 @@ namespace RestaurantSys
 
     }
 
+
+    /// <summary>  the class for Realtouch Board function </summary>
     class RealtouchBoard
     {
+
+        /// <summary>
+        /// Set URL
+        /// </summary>
+        /// <param name="a_Type">[IN] POST data type</param>
         private static string SetURL(POST_DATA_TYPE a_Type)
         {
             string URL = "";
@@ -236,6 +365,10 @@ namespace RestaurantSys
             return URL;
         }
 
+        /// <summary>
+        /// Set PostData
+        /// </summary>
+        /// <param name="a_Type">[IN] POST data type</param>
         private static string SetPostData(POST_DATA_TYPE a_Type)
         {
             string postData = "";
@@ -290,8 +423,13 @@ namespace RestaurantSys
             return postData;
         }
 
+        /// <summary>
+        /// Get SessionID
+        /// </summary>
+        /// <remarks> 
+        /// 這裡必須確定"帳號"&"密碼"都已設定好了 </remarks>
         public static void GetSessionID()
-        {   // 這裡必須確定"帳號"&"密碼"都已設定好了
+        {
             var JasonString = GetJASONResult(POST_DATA_TYPE.LOGIN);
             dynamic json = JValue.Parse(JasonString.ToString());
 
@@ -301,6 +439,12 @@ namespace RestaurantSys
             Global.SessionID = sessionID;
         }
 
+
+        /// <summary>
+        /// 選擇廠商
+        /// </summary>
+        /// <remarks> 
+        /// 選擇廠商並取得廠商編號"organizerNO" </remarks>
         private static void organizerNO_Selcet(object sender, EventArgs e)
         {
             Global.organizerNO = ((Button)sender).Name;
@@ -315,6 +459,11 @@ namespace RestaurantSys
             ((Button)sender).FindForm().Close();
         }
 
+
+        /// <summary>
+        /// Get JASON result
+        /// </summary>
+        /// <param name="a_Type">[IN] POST data type</param>
         public static object GetJASONResult(POST_DATA_TYPE a_Type)
         {
             object JASONResult = "";
@@ -336,8 +485,12 @@ namespace RestaurantSys
             return JASONResult;
         }
 
+
+        /// <summary>
+        /// select OrganizerNO by generating a form with bottun: 這裡必須確定"SessionID"都已設定好了
+        /// </summary>
         public static void GetOrganizerNO()
-        {   // 這裡必須確定"SessionID"都已設定好了
+        {
             var JasonString = GetJASONResult(POST_DATA_TYPE.ORGANIZER_NO);
 
             #region With_List
@@ -391,9 +544,11 @@ namespace RestaurantSys
             #endregion
         }
 
-
+        /// <summary>
+        /// get SystemID: 這裡必須確定"SessionID"&"organizerNO"都已設定好了
+        /// </summary>
         public static void GetSystemID()
-        {   // 這裡必須確定"SessionID"&"organizerNO"都已設定好了
+        {
             var JasonString = GetJASONResult(POST_DATA_TYPE.NEW_LIST);
 
             #region With_List
@@ -414,6 +569,11 @@ namespace RestaurantSys
             #endregion
         }
 
+
+        /// <summary>
+        /// juge if the jason item is movie: for AD info
+        /// </summary>
+        /// <param name="a_JItem">[IN] jason item</param>
         private static bool IsMovie(JToken a_JItem)
         {
             if (a_JItem.SelectToken("movie") == null)
@@ -426,8 +586,13 @@ namespace RestaurantSys
             }
         }
 
+        /// <summary>
+        ///  Get AD Content
+        /// </summary>
+        /// <remarks> 
+        /// 取得廣告內容載入結構、保存並且排序: 這裡必須確定"SessionID"&"organizerNO"&"systemID"都已設定好了 </remarks>
         public static void GetAD_Content()
-        {   // 這裡必須確定"SessionID"&"organizerNO"&"systemID"都已設定好了
+        {
             var JasonString = GetJASONResult(POST_DATA_TYPE.NEW_CONTENT);
 
             if (Directory.Exists(Global.TempDatadirPath))
@@ -488,9 +653,14 @@ namespace RestaurantSys
             });
         }
 
-        public static void Get_CategoryContent()
-        {   // 這裡必須確定"SessionID"&"organizerNO"都已設定好了
 
+        /// <summary>
+        ///  Get Category Content
+        /// </summary>
+        /// <remarks> 
+        /// 取得產品分類內容載入結構、保存: 這裡必須確定"SessionID"&"organizerNO"都已設定好了 </remarks>
+        public static void Get_CategoryContent()
+        {
             // Global.DEBUG_FLAG = 1;
 
             var JasonString = GetJASONResult(POST_DATA_TYPE.CATEGORY);
@@ -527,7 +697,6 @@ namespace RestaurantSys
                 var JItem = JList[cnt];
 
                 Global.atCategoryInfo[cnt].Sort = Convert.ToInt32(JItem.SelectToken("sort").ToString());
-
                 Global.atCategoryInfo[cnt].type = JItem.SelectToken("type").ToString();
                 Global.atCategoryInfo[cnt].categoryID = JItem.SelectToken("categoryID").ToString();
                 Global.atCategoryInfo[cnt].categoryName = JItem.SelectToken("categoryName").ToString();
@@ -535,18 +704,10 @@ namespace RestaurantSys
                 Global.atCategoryInfo[cnt].code = JItem.SelectToken("code").ToString();
                 Global.atCategoryInfo[cnt].parentID = JItem.SelectToken("parentID").ToString();
                 Global.atCategoryInfo[cnt].parentIDs = JItem.SelectToken("parentIDs").ToString();
-
-                //if(cnt == 7)
-                //{
-                //    var ttt = JItem.SelectToken("discount");
-                //}
-
                 Global.atCategoryInfo[cnt].discount = Convert.ToDouble(JItem.SelectToken("discount").ToString());
                 Global.atCategoryInfo[cnt].service = Convert.ToDouble(JItem.SelectToken("service").ToString());
                 Global.atCategoryInfo[cnt].categoryImage = JItem.SelectToken("categoryImage").ToString();
                 Global.atCategoryInfo[cnt].categoryImageThumb = JItem.SelectToken("categoryImageThumb").ToString();
-
-
             }
             #endregion
 
@@ -557,6 +718,11 @@ namespace RestaurantSys
             //});
         }
 
+
+        /// <summary>
+        /// 將產品分類結構階層化: 為了處理巢狀問題
+        /// </summary>
+        /// <param name="a_atCategoryInfo">[IN] 產品分類結構清單</param>
         public static CategoryInfo[] MakeCategoryInfoHierarchical_two_layer_one_parentID(CategoryInfo[] a_atCategoryInfo)
         {   // 概念是從最底層往上接
             CategoryInfo[] atCategoryInfoModified = null;
@@ -608,9 +774,12 @@ namespace RestaurantSys
             return atCategoryInfoModified;
         }
 
-        public static void Get_Product()
-        {   // 這裡必須確定"SessionID"&"organizerNO"都已設定好了
 
+        /// <summary>
+        /// 取得產品資料載入結構並且保存: 這裡必須確定"SessionID"&"organizerNO"都已設定好了
+        /// </summary>
+        public static void Get_Product()
+        {
             // Global.DEBUG_FLAG = 1;
 
             var JasonString = GetJASONResult(POST_DATA_TYPE.PRODUCT);
@@ -694,9 +863,11 @@ namespace RestaurantSys
             #endregion
         }
 
+        /// <summary>
+        /// 下載產品相關檔案: 這裡必須確定 Product 資料都已載入
+        /// </summary>
         public static void DownLoad_Product_File()
-        {   // 這裡必須確定 Product 資料都已載入
-
+        {
             // start to download all ad element
             for (int cnt = 0; cnt < Global.atProductInfo.Length; cnt++)
             {
@@ -721,9 +892,11 @@ namespace RestaurantSys
             }
         }
 
+        /// <summary>
+        /// 下載產品分類相關檔案: 這裡必須確定Category資料都已載入
+        /// </summary>
         public static void DownLoad_Category_File()
-        {   // 這裡必須確定Category資料都已載入
-
+        {
             // start to download all ad element
             for (int cnt = 0; cnt < Global.atCategoryInfo.Length; cnt++)
             {
@@ -746,9 +919,11 @@ namespace RestaurantSys
             }
         }
 
+        /// <summary>
+        /// 下載廣告資料相關檔案: 這裡必須確定廣告資料都已載入
+        /// </summary>
         public static void DownLoad_AD_File()
-        {   // 這裡必須確定廣告資料都已載入
-
+        {
             // 建立檔案串流（@ 可取消跳脫字元 escape sequence） for log
             StreamWriter sw = new StreamWriter(Global.TempDatadirPath + @"AD_PlayList_Log.txt");
 
@@ -758,7 +933,6 @@ namespace RestaurantSys
                 string TempADName = Global.TempDatadirPath + Global.atAD_ContentInfo[cnt].name + Global.atAD_ContentInfo[cnt].FilenameExtension;
                 WebCommunication.DownloadFile(Global.atAD_ContentInfo[cnt].URL, TempADName);
                 sw.WriteLine(TempADName); // 寫入文字
-
             }
 
             sw.Close(); // 關閉串流
