@@ -12,13 +12,20 @@ namespace RestaurantSys
 {
     public partial class OrderForm : Form
     {
+        /// <summary> 產品分類清單: 階層化後 </summary>
+        public static CategoryInfo[] atCategoryInfoHierarchicalTmp = null;
+
+        /// <summary> true: 顯示菜單 false: 顯示目前點餐細項 </summary>
+        public static bool IsDisplay = true;
+
         public OrderForm()
         {
             InitializeComponent();
 
 
-            // 測試用 產生N個按鈕 EX: 20
-            GenButton(MainPanel, Global.atCategoryInfo.Length, 100, MainPanel.Size.Height - 20);
+            // 測試用 產生N個按鈕 EX: 載入階層化後的產品分類清單
+            atCategoryInfoHierarchicalTmp = Global.atCategoryInfoHierarchical;
+            GenButton(MainPanel, atCategoryInfoHierarchicalTmp.Length, 100, MainPanel.Size.Height - 20);
 
             // 測試用 產生N個按鈕 EX: 10
             GenButton(DisplayPanel, 10, 100, MainPanel.Size.Height - 20, false);
@@ -47,7 +54,7 @@ namespace RestaurantSys
                     btn.Left = a_BtnWidth * i;
                     btn.Top = 0;
                     // btn.Text = i.ToString();
-                    btn.Text = Global.atCategoryInfo[i].categoryName;
+                    btn.Text = atCategoryInfoHierarchicalTmp[i].categoryName;
                     
                     btn.Click += new EventHandler(MainMenuClick);
                 }
@@ -72,7 +79,25 @@ namespace RestaurantSys
 
         private void MainMenuClick(object sender, EventArgs e)
         {
-            MessageBox.Show(((Button)sender).Text);
+            // for debug
+            if (Global.DEBUG_FLAG > 1)
+            {
+                MessageBox.Show(((Button)sender).Text);
+            }
+
+            List<CategoryInfo> ListTmp = new List<CategoryInfo>(atCategoryInfoHierarchicalTmp);
+
+            // 找出按鈕所屬的 index
+            int IndexTmp = ListTmp.FindIndex(x => x.categoryName == ((Button)sender).Text);
+
+            if (atCategoryInfoHierarchicalTmp[IndexTmp].SubCategory != null)
+            {
+                atCategoryInfoHierarchicalTmp = atCategoryInfoHierarchicalTmp[IndexTmp].SubCategory;
+
+                MainPanel.Controls.Clear();
+
+                GenButton(MainPanel, atCategoryInfoHierarchicalTmp.Length, 100, MainPanel.Size.Height - 20);
+            }
         }
 
         private void DetailMenuClick(object sender, EventArgs e)
@@ -89,6 +114,29 @@ namespace RestaurantSys
         {
             // close its form after select
             ((Button)sender).FindForm().Close();
+        }
+
+        private void MainMenu_Click(object sender, EventArgs e)
+        {
+            atCategoryInfoHierarchicalTmp = Global.atCategoryInfoHierarchical;
+
+            MainPanel.Controls.Clear();
+
+            GenButton(MainPanel, atCategoryInfoHierarchicalTmp.Length, 100, MainPanel.Size.Height - 20);
+        }
+
+        private void DetailButton_Click(object sender, EventArgs e)
+        {
+            IsDisplay = !IsDisplay;
+
+            if(IsDisplay)
+            {
+                DetailButton.Text = "Detail";
+            }
+            else
+            {
+                DetailButton.Text = "Display";
+            }
         }
     }
 }

@@ -720,7 +720,7 @@ namespace RestaurantSys
 
 
         /// <summary>
-        /// 將產品分類結構階層化: 為了處理巢狀問題
+        /// 將產品分類結構階層化: 為了處理巢狀問題(只處裡兩層&一個父分類)
         /// </summary>
         /// <param name="a_atCategoryInfo">[IN] 產品分類結構清單</param>
         public static CategoryInfo[] MakeCategoryInfoHierarchical_two_layer_one_parentID(CategoryInfo[] a_atCategoryInfo)
@@ -729,6 +729,35 @@ namespace RestaurantSys
 
             List<CategoryInfo> List = new List<CategoryInfo>(Global.atCategoryInfo);
 
+            int IndexTmp_1 = List.FindIndex(x => x.categoryName == "湯品");
+            IndexTmp_1 = List.FindIndex(x => x.categoryID == "397");
+
+
+            for (int cnt = 0; cnt < List.Count; cnt++)
+            {
+                if (List[cnt].parentID != "0")
+                {   // 表示不是最上層
+
+                    // 將產品分類加入其父分類
+                    List =  AddToParentCategory(List, cnt);
+
+                    cnt--; // 因為刪除當前的類別 所以下一個類別會變成目前的
+
+                }
+            }
+            atCategoryInfoModified = List.ToArray();
+            return atCategoryInfoModified;
+        }
+
+        /// <summary>
+        /// 將產品分類結構階層化: 為了處理巢狀問題(只處裡多層&一個父分類)
+        /// </summary>
+        /// <param name="a_atCategoryInfo">[IN] 產品分類結構清單</param>
+        public static CategoryInfo[] MakeCategoryInfoHierarchical_multi_layer_one_parentID(CategoryInfo[] a_atCategoryInfo)
+        {   // 概念是從最底層往上接
+            CategoryInfo[] atCategoryInfoModified = null;
+
+            List<CategoryInfo> List = new List<CategoryInfo>(Global.atCategoryInfo);
 
             int IndexTmp_1 = List.FindIndex(x => x.categoryName == "湯品");
             IndexTmp_1 = List.FindIndex(x => x.categoryID == "397");
@@ -736,42 +765,75 @@ namespace RestaurantSys
 
             for (int cnt = 0; cnt < List.Count; cnt++)
             {
-                // List[cnt].parentID = "wwww";
-                if (List[cnt].parentID != "0")
-                {   // 表示不是最上層
+                bool IsLowestLayerTmp = IsLowestLayer(List, cnt);
+                if (IsLowestLayerTmp)
+                {   // 表示是最底層
 
-                    // 找出他的所屬的主類別 index
-                    int IndexTmp = List.FindIndex(x => x.categoryID == List[cnt].parentID);
-
-                    // 將目前的類別加入其所屬類別
-                    List<CategoryInfo> ListTmp = null;
-                    if (List[IndexTmp].SubCategory == null)
-                    {   
-                        ListTmp = new List<CategoryInfo>(); // 所屬的主類別的子類別暫時為空的 >> 創建
-                    }
-                    else
-                    {
-                        ListTmp = new List<CategoryInfo>(List[IndexTmp].SubCategory); // 將主類別的子類別轉成list
-                    }
-                    ListTmp.Add(List[cnt]);                                                     // 將當前類別加入 所屬主類別的子類別 list
-                    CategoryInfo TmpSwap = List[IndexTmp];                                           // list不能修改內容 只好用個結構暫存
-                    TmpSwap.SubCategory = ListTmp.ToArray();                                    // 改變其子類別    
-                    List.RemoveAt(IndexTmp);                                                    // 刪除原本主類別
-                    List.Insert(IndexTmp, TmpSwap);                                             // 加入子類別已被更新的主類別
-
-                    // 目前類別已被加入其他類別的子類別 所以要刪除
-                    List.RemoveAt(cnt);
+                    // 將產品分類加入其父分類
+                    List = AddToParentCategory(List, cnt);
 
                     cnt--; // 因為刪除當前的類別 所以下一個類別會變成目前的
 
                 }
             }
-
-
             atCategoryInfoModified = List.ToArray();
-
-
             return atCategoryInfoModified;
+        }
+
+        /// <summary>
+        /// 判斷是否是最底層分類
+        /// </summary>
+        /// <param name="a_atCategoryInfo">[IN] 產品分類結構清單</param>
+        public static bool IsLowestLayer(List<CategoryInfo> a_CategoryList, int a_CurrentIndex)
+        {
+            if (a_CategoryList[a_CurrentIndex].parentID == "0")
+            {   // 是最頂層 絕對不是底層
+                return false;
+            }
+            else
+            {
+                for (int cnt = 0; cnt < a_CategoryList.Count; cnt++)
+                {
+                    if (a_CategoryList[cnt].parentID == a_CategoryList[a_CurrentIndex].categoryID && cnt != a_CurrentIndex)
+                    {   // 是某個分類的父分類 >> 表示不是最底層
+                        return false;
+                    }
+                }
+            }
+
+            // 都沒條件 hit >> 最底層
+            return true;
+        }
+
+        /// <summary>
+        /// 將產品分類加入其父分類: 為了處理巢狀問題
+        /// </summary>
+        /// <param name="a_atCategoryInfo">[IN] 產品分類結構清單</param>
+        public static List<CategoryInfo> AddToParentCategory(List<CategoryInfo> a_List, int a_CurrentIndex)
+        {
+            // 找出他的所屬的主類別 index
+            int IndexTmp = a_List.FindIndex(x => x.categoryID == a_List[a_CurrentIndex].parentID);
+
+            // 將目前的類別加入其所屬類別
+            List<CategoryInfo> ListTmp = null;
+            if (a_List[IndexTmp].SubCategory == null)
+            {
+                ListTmp = new List<CategoryInfo>(); // 所屬的主類別的子類別暫時為空的 >> 創建
+            }
+            else
+            {
+                ListTmp = new List<CategoryInfo>(a_List[IndexTmp].SubCategory); // 將主類別的子類別轉成list
+            }
+            ListTmp.Add(a_List[a_CurrentIndex]);                                                     // 將當前類別加入 所屬主類別的子類別 list
+            CategoryInfo TmpSwap = a_List[IndexTmp];                                           // list不能修改內容 只好用個結構暫存
+            TmpSwap.SubCategory = ListTmp.ToArray();                                    // 改變其子類別    
+            a_List.RemoveAt(IndexTmp);                                                    // 刪除原本主類別
+            a_List.Insert(IndexTmp, TmpSwap);                                             // 加入子類別已被更新的主類別
+
+            // 目前類別已被加入其他類別的子類別 所以要刪除
+            a_List.RemoveAt(a_CurrentIndex);
+
+            return a_List;
         }
 
 
@@ -914,7 +976,8 @@ namespace RestaurantSys
                 }
                 else
                 {
-                    MessageBox.Show("Category " + cnt.ToString() + " URL is null");
+                    // MessageBox.Show("Category " + cnt.ToString() + " URL is null");
+                    Console.WriteLine("Category " + cnt.ToString() + " URL is null");
                 }
             }
         }

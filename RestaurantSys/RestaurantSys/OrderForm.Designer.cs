@@ -31,8 +31,9 @@
             this.MainPanel = new System.Windows.Forms.Panel();
             this.DisplayPanel = new System.Windows.Forms.Panel();
             this.BillButton = new System.Windows.Forms.Button();
-            this.DetailButton = new System.Windows.Forms.Button();
             this.CancelButton = new System.Windows.Forms.Button();
+            this.MainMenu = new System.Windows.Forms.Button();
+            this.DetailButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // MainPanel
@@ -48,12 +49,12 @@
             this.DisplayPanel.AutoScroll = true;
             this.DisplayPanel.Location = new System.Drawing.Point(12, 141);
             this.DisplayPanel.Name = "DisplayPanel";
-            this.DisplayPanel.Size = new System.Drawing.Size(451, 336);
+            this.DisplayPanel.Size = new System.Drawing.Size(451, 281);
             this.DisplayPanel.TabIndex = 1;
             // 
             // BillButton
             // 
-            this.BillButton.Location = new System.Drawing.Point(37, 485);
+            this.BillButton.Location = new System.Drawing.Point(12, 485);
             this.BillButton.Name = "BillButton";
             this.BillButton.Size = new System.Drawing.Size(95, 46);
             this.BillButton.TabIndex = 2;
@@ -61,18 +62,9 @@
             this.BillButton.UseVisualStyleBackColor = true;
             this.BillButton.Click += new System.EventHandler(this.BillButton_Click);
             // 
-            // DetailButton
-            // 
-            this.DetailButton.Location = new System.Drawing.Point(177, 485);
-            this.DetailButton.Name = "DetailButton";
-            this.DetailButton.Size = new System.Drawing.Size(95, 46);
-            this.DetailButton.TabIndex = 3;
-            this.DetailButton.Text = "Detail";
-            this.DetailButton.UseVisualStyleBackColor = true;
-            // 
             // CancelButton
             // 
-            this.CancelButton.Location = new System.Drawing.Point(311, 485);
+            this.CancelButton.Location = new System.Drawing.Point(214, 485);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Size = new System.Drawing.Size(95, 46);
             this.CancelButton.TabIndex = 4;
@@ -80,11 +72,32 @@
             this.CancelButton.UseVisualStyleBackColor = true;
             this.CancelButton.Click += new System.EventHandler(this.CancelButton_Click);
             // 
+            // MainMenu
+            // 
+            this.MainMenu.Location = new System.Drawing.Point(371, 485);
+            this.MainMenu.Name = "MainMenu";
+            this.MainMenu.Size = new System.Drawing.Size(92, 44);
+            this.MainMenu.TabIndex = 5;
+            this.MainMenu.Text = "MainMenu";
+            this.MainMenu.UseVisualStyleBackColor = true;
+            this.MainMenu.Click += new System.EventHandler(this.MainMenu_Click);
+            // 
+            // DetailButton
+            // 
+            this.DetailButton.Location = new System.Drawing.Point(113, 485);
+            this.DetailButton.Name = "DetailButton";
+            this.DetailButton.Size = new System.Drawing.Size(95, 46);
+            this.DetailButton.TabIndex = 3;
+            this.DetailButton.Text = "Detail";
+            this.DetailButton.UseVisualStyleBackColor = true;
+            this.DetailButton.Click += new System.EventHandler(this.DetailButton_Click);
+            // 
             // OrderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(475, 541);
+            this.Controls.Add(this.MainMenu);
             this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.DetailButton);
             this.Controls.Add(this.BillButton);
@@ -101,7 +114,8 @@
         private System.Windows.Forms.Panel MainPanel;
         private System.Windows.Forms.Panel DisplayPanel;
         private System.Windows.Forms.Button BillButton;
-        private System.Windows.Forms.Button DetailButton;
         private System.Windows.Forms.Button CancelButton;
+        private System.Windows.Forms.Button MainMenu;
+        private System.Windows.Forms.Button DetailButton;
     }
 }
