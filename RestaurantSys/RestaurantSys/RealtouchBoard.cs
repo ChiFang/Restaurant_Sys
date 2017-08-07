@@ -437,6 +437,21 @@ namespace RestaurantSys
             string name = json.name;
             string sessionID = json.sessionID;
             Global.SessionID = sessionID;
+
+            if (Directory.Exists(Global.TempDatadirPath))
+            {
+                Console.WriteLine("The directory {0} already exists.", Global.TempDatadirPath);
+            }
+            else
+            {
+                Directory.CreateDirectory(Global.TempDatadirPath);
+                Console.WriteLine("The directory {0} was created.", Global.TempDatadirPath);
+            }
+
+            // 建立檔案串流（@ 可取消跳脫字元 escape sequence） for log
+            StreamWriter sw = new StreamWriter(Global.TempDatadirPath + @"SessionID.txt");
+            sw.WriteLine(Global.SessionID);               // 寫入文字
+            sw.Close();                                         // 關閉串流
         }
 
 
@@ -457,6 +472,22 @@ namespace RestaurantSys
 
             // close its form after select
             ((Button)sender).FindForm().Close();
+
+
+            if (Directory.Exists(Global.TempDatadirPath))
+            {
+                Console.WriteLine("The directory {0} already exists.", Global.TempDatadirPath);
+            }
+            else
+            {
+                Directory.CreateDirectory(Global.TempDatadirPath);
+                Console.WriteLine("The directory {0} was created.", Global.TempDatadirPath);
+            }
+
+            // 建立檔案串流（@ 可取消跳脫字元 escape sequence） for log
+            StreamWriter sw = new StreamWriter(Global.TempDatadirPath + @"OrganizerNO.txt");
+            sw.WriteLine(Global.organizerNO);               // 寫入文字
+            sw.Close();                                         // 關閉串流
         }
 
 
@@ -999,6 +1030,209 @@ namespace RestaurantSys
             }
 
             sw.Close(); // 關閉串流
+        }
+
+        /// <summary>
+        /// 從文字檔重新載入廣告資料: 必須確定檔案已下載
+        /// </summary>
+        public static void Reload_AD_Content()
+        {
+            var AD_Content_Log = File.ReadAllText(Application.StartupPath + @"\temp_file\" + "AD_Content_Log.txt");
+
+            #region With_List
+
+            // 抓取 Jason 中的 "news"內容清單並轉成List
+            var JList = JObject.Parse(AD_Content_Log).SelectToken("news").ToList();
+
+            // 取得清單長度
+            long cnt_JList = JList.LongCount();
+
+            // 創建相對應的結構
+            Global.atAD_ContentInfo = new ADInfo[cnt_JList];
+
+            // 將每組輪播資料載入結構
+            for (int cnt = 0; cnt < cnt_JList; cnt++)
+            {
+                var JItem = JList[cnt];
+
+                Global.atAD_ContentInfo[cnt].Sort = Convert.ToInt32(JItem.SelectToken("sort").ToString());
+                Global.atAD_ContentInfo[cnt].name = JItem.SelectToken("name").ToString();
+                Global.atAD_ContentInfo[cnt].newsID = JItem.SelectToken("newsID").ToString();
+                Global.atAD_ContentInfo[cnt].Type = JItem.SelectToken("type").ToString();
+                if (IsMovie(JItem))
+                {   // it's movie  
+                    Global.atAD_ContentInfo[cnt].URL = JItem.SelectToken("movie").ToString();
+                    Global.atAD_ContentInfo[cnt].URLThumb = JItem.SelectToken("pic").ToString();
+
+                    Global.atAD_ContentInfo[cnt].FilenameExtension = ".mp4";
+                }
+                else
+                {   // it's photo
+                    Global.atAD_ContentInfo[cnt].URL = JItem.SelectToken("pic").ToString();
+                    Global.atAD_ContentInfo[cnt].URLThumb = JItem.SelectToken("picThumb").ToString();
+                    Global.atAD_ContentInfo[cnt].FilenameExtension = ".jpg";
+                }
+            }
+            #endregion
+
+            // sort array by "Sort" element
+            Array.Sort(Global.atAD_ContentInfo, delegate (ADInfo item1, ADInfo item2)
+            {
+                return item1.Sort.CompareTo(item2.Sort); // (user1.Sort - user2.Sort)
+            });
+        }
+
+        /// <summary>
+        ///  Reload Category Content by .txt: 必須確定檔案已下載
+        /// </summary>
+        /// <remarks> 
+        /// 取得產品分類內容載入結構 </remarks>
+        public static void Reload_CategoryContent()
+        {
+            var Category_Log = File.ReadAllText(Application.StartupPath + @"\temp_file\" + "CategoryContent_Log.txt");
+            
+            #region With_List
+            // 抓取 Jason 中的 "category"內容清單並轉成List
+            var JList = JObject.Parse(Category_Log).SelectToken("category").ToList();
+
+            // 取得category長度
+            long cnt_JList = JList.LongCount();
+
+            // 創建相對應的結構
+            Global.atCategoryInfo = new CategoryInfo[cnt_JList];
+
+            // 將每組輪播資料載入結構
+            for (int cnt = 0; cnt < cnt_JList; cnt++)
+            {
+                var JItem = JList[cnt];
+
+                Global.atCategoryInfo[cnt].Sort = Convert.ToInt32(JItem.SelectToken("sort").ToString());
+                Global.atCategoryInfo[cnt].type = JItem.SelectToken("type").ToString();
+                Global.atCategoryInfo[cnt].categoryID = JItem.SelectToken("categoryID").ToString();
+                Global.atCategoryInfo[cnt].categoryName = JItem.SelectToken("categoryName").ToString();
+                Global.atCategoryInfo[cnt].categoryForeignName = JItem.SelectToken("categoryForeignName").ToString();
+                Global.atCategoryInfo[cnt].code = JItem.SelectToken("code").ToString();
+                Global.atCategoryInfo[cnt].parentID = JItem.SelectToken("parentID").ToString();
+                Global.atCategoryInfo[cnt].parentIDs = JItem.SelectToken("parentIDs").ToString();
+                Global.atCategoryInfo[cnt].discount = Convert.ToDouble(JItem.SelectToken("discount").ToString());
+                Global.atCategoryInfo[cnt].service = Convert.ToDouble(JItem.SelectToken("service").ToString());
+                Global.atCategoryInfo[cnt].categoryImage = JItem.SelectToken("categoryImage").ToString();
+                Global.atCategoryInfo[cnt].categoryImageThumb = JItem.SelectToken("categoryImageThumb").ToString();
+            }
+            #endregion
+
+            // sort array by "Sort" element
+            //Array.Sort(Global.atCategoryInfo, delegate (CategoryInfo item1, CategoryInfo item2)
+            //{
+            //    return item1.Sort.CompareTo(item2.Sort); // (user1.Sort - user2.Sort)
+            //});
+        }
+
+        /// <summary>
+        /// 從文字檔重新載入產品資料載入結構: : 必須確定檔案已下載
+        /// </summary>
+        public static void Reload_Product()
+        {
+
+            var Product_Log = File.ReadAllText(Application.StartupPath + @"\temp_file\" + "Product_Log.txt");
+
+            #region With_List
+            // 抓取 Jason 中的 "product"內容清單並轉成List
+            var JList = JObject.Parse(Product_Log).SelectToken("product").ToList();
+
+            // 取得category長度
+            long cnt_JList = JList.LongCount();
+
+            // 創建相對應的結構
+            Global.atProductInfo = new ProductInfo[cnt_JList];
+
+            // 將每組輪播資料載入結構
+            for (int cnt = 0; cnt < cnt_JList; cnt++)
+            {
+                var JItem = JList[cnt];
+                Global.atProductInfo[cnt].type = JItem.SelectToken("type").ToString();
+                Global.atProductInfo[cnt].productType = JItem.SelectToken("productType").ToString();
+                Global.atProductInfo[cnt].productID = JItem.SelectToken("productID").ToString();
+                Global.atProductInfo[cnt].productName = JItem.SelectToken("productName").ToString();
+                // Global.atProductInfo[cnt].productForeignName = JItem.SelectToken("productForeignName").ToString();
+                Global.atProductInfo[cnt].productShortName = JItem.SelectToken("productShortName").ToString();
+                Global.atProductInfo[cnt].commission = JItem.SelectToken("commission").ToString();
+                Global.atProductInfo[cnt].note = JItem.SelectToken("note").ToString();
+                Global.atProductInfo[cnt].content = JItem.SelectToken("content").ToString();
+
+                // category is a list
+                var CategoryList = JItem.SelectToken("category").ToList();
+                long cnt_CategoryList = CategoryList.LongCount();
+                Global.atProductInfo[cnt].category = new string[cnt_CategoryList];
+                for (int CntTmp = 0; CntTmp < cnt_CategoryList; CntTmp++)
+                {
+                    Global.atProductInfo[cnt].category[CntTmp] = CategoryList[CntTmp].ToString();
+                }
+
+                Global.atProductInfo[cnt].productSort = JItem.SelectToken("productSort").ToString();
+                Global.atProductInfo[cnt].specSort = JItem.SelectToken("specSort").ToString();
+                Global.atProductInfo[cnt].redeemedPoint = JItem.SelectToken("redeemedPoint").ToString();
+                Global.atProductInfo[cnt].barcode = JItem.SelectToken("barcode").ToString();
+
+                Global.atProductInfo[cnt].oriPrice = Convert.ToDouble(JItem.SelectToken("oriPrice").ToString());
+                Global.atProductInfo[cnt].price = Convert.ToDouble(JItem.SelectToken("price").ToString());
+
+                // Global.atProductInfo[cnt].combine = JItem.SelectToken("combine").ToString(); // 不一定有 要另外處裡
+                Global.atProductInfo[cnt].mark = JItem.SelectToken("mark").ToString();
+                // Global.atProductInfo[cnt].DefaultOption = JItem.SelectToken("default").ToString(); // 不一定有 要另外處裡
+
+                var ImageList = JItem.SelectToken("image"); // ImageList 會是個array
+                // var TmpData = ImageList[0].SelectToken("productImage");
+
+                if (ImageList.Children().Count() == 0)
+                {   // 表示沒有網址... 連空字串都不是.....ORZ
+                    Global.atProductInfo[cnt].productImage = "";
+                    Global.atProductInfo[cnt].productImageThumb = "";
+                }
+                else
+                {
+                    Global.atProductInfo[cnt].productImage = ImageList[0].SelectToken("productImage").ToString();
+                    Global.atProductInfo[cnt].productImageThumb = ImageList[0].SelectToken("productImageThumb").ToString();
+                }
+
+            }
+            #endregion
+        }
+
+        /// <summary>
+        /// 從文字檔重新載入SessionID
+        /// </summary>
+        public static void Reload_SessionID()
+        {
+            using (StreamReader sr = new StreamReader(Global.TempDatadirPath + @"SessionID.txt"))     //小寫TXT
+            {
+                String line;
+                // Read and display lines from the file until the end of 
+                // the file is reached.
+                while ((line = sr.ReadLine()) != null)
+                {
+                    Global.SessionID = line;
+                    Console.WriteLine(line);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 從文字檔重新載入OrganizerNO
+        /// </summary>
+        public static void Reload_OrganizerNO()
+        {
+            using (StreamReader sr = new StreamReader(Global.TempDatadirPath + @"OrganizerNO.txt"))     //小寫TXT
+            {
+                String line;
+                // Read and display lines from the file until the end of 
+                // the file is reached.
+                while ((line = sr.ReadLine()) != null)
+                {
+                    Global.organizerNO = line;
+                    Console.WriteLine(line);
+                }
+            }
         }
     }
 }

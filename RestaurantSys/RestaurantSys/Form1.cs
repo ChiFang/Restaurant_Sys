@@ -260,6 +260,42 @@ namespace RestaurantSys
                 MessageBox.Show("All Product file are downloaded.");
             }
         }
+
+        private void ReloadDataButton_Click(object sender, EventArgs e)
+        {
+            RealtouchBoard.Reload_SessionID();
+            RealtouchBoard.Reload_OrganizerNO();
+
+            RealtouchBoard.Reload_AD_Content();
+
+            // add to play list
+            for (int cnt = 0; cnt < Global.atAD_ContentInfo.Length; cnt++)
+            {
+                string TempADName = Global.TempDatadirPath + Global.atAD_ContentInfo[cnt].name + Global.atAD_ContentInfo[cnt].FilenameExtension;
+                AdListBox.Items.Add(TempADName);
+            }
+
+            RealtouchBoard.Reload_CategoryContent();
+
+            // for debug
+            if (Global.DEBUG_FLAG > 0)
+            {
+                MessageBox.Show("There are " + Global.atCategoryInfo.Length.ToString() + " Category.");
+            }
+
+            // for making Category Info Hierarchical
+            Global.atCategoryInfoHierarchical = RealtouchBoard.MakeCategoryInfoHierarchical_multi_layer_one_parentID(Global.atCategoryInfo);
+
+
+            RealtouchBoard.Reload_Product();
+
+            // for debug
+            if (Global.DEBUG_FLAG > 0)
+            {
+                MessageBox.Show("There are " + Global.atProductInfo.Length.ToString() + " Product.");
+            }
+
+        }
     }
 
 }

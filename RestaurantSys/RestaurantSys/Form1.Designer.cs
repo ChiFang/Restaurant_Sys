@@ -46,6 +46,7 @@
             this.NewsListButton = new System.Windows.Forms.Button();
             this.organizerNO_Button = new System.Windows.Forms.Button();
             this.LogIn = new System.Windows.Forms.Button();
+            this.ReloadDataButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.AdRotator)).BeginInit();
             this.TestPanel.SuspendLayout();
             this.SuspendLayout();
@@ -129,6 +130,7 @@
             // 
             // TestPanel
             // 
+            this.TestPanel.Controls.Add(this.ReloadDataButton);
             this.TestPanel.Controls.Add(this.ProductButton);
             this.TestPanel.Controls.Add(this.CategoryButton);
             this.TestPanel.Controls.Add(this.DownloadButton);
@@ -216,6 +218,16 @@
             this.LogIn.UseVisualStyleBackColor = true;
             this.LogIn.Click += new System.EventHandler(this.LogIn_Click);
             // 
+            // ReloadDataButton
+            // 
+            this.ReloadDataButton.Location = new System.Drawing.Point(36, 205);
+            this.ReloadDataButton.Name = "ReloadDataButton";
+            this.ReloadDataButton.Size = new System.Drawing.Size(156, 23);
+            this.ReloadDataButton.TabIndex = 15;
+            this.ReloadDataButton.Text = "Reload Data";
+            this.ReloadDataButton.UseVisualStyleBackColor = true;
+            this.ReloadDataButton.Click += new System.EventHandler(this.ReloadDataButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -252,6 +264,7 @@
         private System.Windows.Forms.Button DownloadButton;
         private System.Windows.Forms.Button ProductButton;
         private System.Windows.Forms.Button CategoryButton;
+        private System.Windows.Forms.Button ReloadDataButton;
     }
 }
 
