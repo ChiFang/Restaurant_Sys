@@ -15,6 +15,10 @@ namespace RestaurantSys
         /// <summary> 產品分類清單: 階層化後 </summary>
         public static CategoryInfo[] atCategoryInfoHierarchicalTmp = null;
 
+
+        /// <summary> 產品清單: 顯示區內 </summary>
+        public static List<ProductInfo> atProductInfoTmp = null;
+
         /// <summary> true: 顯示菜單 false: 顯示目前點餐細項 </summary>
         public static bool IsDisplay = true;
 
@@ -28,7 +32,7 @@ namespace RestaurantSys
             GenButton(MainPanel, atCategoryInfoHierarchicalTmp.Length, 100, MainPanel.Size.Height - 20);
 
             // 測試用 產生N個按鈕 EX: 10
-            GenButton(DisplayPanel, 10, 100, MainPanel.Size.Height - 20, false);
+            // GenButton(DisplayPanel, 10, 100, MainPanel.Size.Height - 20, false);
         }
 
         private void BillButton_Click(object sender, EventArgs e)
@@ -68,7 +72,7 @@ namespace RestaurantSys
 
                     btn.Left = a_BtnWidth * ColIndex;
                     btn.Top = RowIndex * a_BtnHeight;
-                    btn.Text = i.ToString();
+                    btn.Text = atProductInfoTmp[i].productName;
                     btn.Click += new EventHandler(DetailMenuClick);
 
                     ColIndex++;
@@ -79,6 +83,9 @@ namespace RestaurantSys
 
         private void MainMenuClick(object sender, EventArgs e)
         {
+            bool IsSubCategory = false;
+
+
             // for debug
             if (Global.DEBUG_FLAG > 1)
             {
@@ -92,11 +99,59 @@ namespace RestaurantSys
 
             if (atCategoryInfoHierarchicalTmp[IndexTmp].SubCategory != null)
             {
+                IsSubCategory = true;
                 atCategoryInfoHierarchicalTmp = atCategoryInfoHierarchicalTmp[IndexTmp].SubCategory;
 
                 MainPanel.Controls.Clear();
 
                 GenButton(MainPanel, atCategoryInfoHierarchicalTmp.Length, 100, MainPanel.Size.Height - 20);
+            }
+            else
+            {
+                IsSubCategory = false;
+            }
+
+
+            // 要刷新顯示區域 >> DisplayPanel
+            List<string> Result = new List<string>();
+
+            if (IsSubCategory)
+            {
+                Result = RealtouchBoard.Get_CategoryID(atCategoryInfoHierarchicalTmp.ToList());
+            }
+            else
+            {
+                List<CategoryInfo> tmpList = new List<CategoryInfo>();
+                tmpList.Add(atCategoryInfoHierarchicalTmp[IndexTmp]);
+                Result = RealtouchBoard.Get_CategoryID(tmpList);
+            }
+
+            atProductInfoTmp = new List<ProductInfo>();
+            for (int cnt = 0; cnt < Global.atProductInfo.Length; cnt++)
+            {
+
+                if (Global.atProductInfo[cnt].category.Length > 0)
+                {   // 理論上一定要有 產品分類... 但居然遇到沒有分類的 ORZ.....
+                    for (int CntSub = 0; CntSub < Global.atProductInfo[cnt].category.Length; CntSub++)
+                    {
+                        string TmpSearch = Global.atProductInfo[cnt].category[CntSub];
+
+                        int IndexProduct = Result.FindIndex(x => x == TmpSearch);
+
+                        if (IndexProduct >= 0)
+                        {
+                            atProductInfoTmp.Add(Global.atProductInfo[cnt]);
+                            break;
+                        }
+                    }
+                }
+            }
+
+
+            DisplayPanel.Controls.Clear();
+            if (atProductInfoTmp.Count >0)
+            {
+                GenButton(DisplayPanel, atProductInfoTmp.Count, 100, MainPanel.Size.Height - 20, false);
             }
         }
 
@@ -123,6 +178,42 @@ namespace RestaurantSys
             MainPanel.Controls.Clear();
 
             GenButton(MainPanel, atCategoryInfoHierarchicalTmp.Length, 100, MainPanel.Size.Height - 20);
+
+
+            // 要刷新顯示區域 >> DisplayPanel
+            List<string> Result = new List<string>();
+
+          
+            Result = RealtouchBoard.Get_CategoryID(atCategoryInfoHierarchicalTmp.ToList());
+          
+
+            atProductInfoTmp = new List<ProductInfo>();
+            for (int cnt = 0; cnt < Global.atProductInfo.Length; cnt++)
+            {
+
+                if (Global.atProductInfo[cnt].category.Length > 0)
+                {   // 理論上一定要有 產品分類... 但居然遇到沒有分類的 ORZ.....
+                    for (int CntSub = 0; CntSub < Global.atProductInfo[cnt].category.Length; CntSub++)
+                    {
+                        string TmpSearch = Global.atProductInfo[cnt].category[CntSub];
+
+                        int IndexProduct = Result.FindIndex(x => x == TmpSearch);
+
+                        if (IndexProduct >= 0)
+                        {
+                            atProductInfoTmp.Add(Global.atProductInfo[cnt]);
+                            break;
+                        }
+                    }
+                }
+            }
+
+
+            DisplayPanel.Controls.Clear();
+            if (atProductInfoTmp.Count > 0)
+            {
+                GenButton(DisplayPanel, atProductInfoTmp.Count, 100, MainPanel.Size.Height - 20, false);
+            }
         }
 
         private void DetailButton_Click(object sender, EventArgs e)

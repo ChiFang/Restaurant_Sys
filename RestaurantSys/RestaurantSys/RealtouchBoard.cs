@@ -1234,5 +1234,33 @@ namespace RestaurantSys
                 }
             }
         }
+
+        /// <summary>
+        /// 從文字檔重新載入OrganizerNO
+        /// </summary>
+        public static List<string> Get_CategoryID(List<CategoryInfo> a_CategoryList)
+        {
+            List<CategoryInfo> CategoryListTmp = a_CategoryList;
+
+            int ListNumber = CategoryListTmp.Count;
+
+
+            List<string> Result = new List<string>();
+
+            for (int cnt = 0; cnt < ListNumber; cnt++)
+            {
+                Result.Add(CategoryListTmp[cnt].categoryID);
+
+                if(CategoryListTmp[cnt].SubCategory != null)
+                {   // 有子類別 加入子類別id
+                    List<string> SubTmp = Get_CategoryID(CategoryListTmp[cnt].SubCategory.ToList());
+                    Result.AddRange(SubTmp);
+                }
+            }
+
+
+
+            return Result;
+        }
     }
 }

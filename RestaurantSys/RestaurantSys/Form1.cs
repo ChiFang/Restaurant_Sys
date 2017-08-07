@@ -263,6 +263,23 @@ namespace RestaurantSys
 
         private void ReloadDataButton_Click(object sender, EventArgs e)
         {
+            List<int> list_1 = new List<int>();
+            list_1.Add(0);
+            list_1.Add(1);
+            list_1.Add(2);
+            list_1.Add(3);
+
+            List<int> list_2 = new List<int>();
+            list_2.Add(4);
+            list_2.Add(5);
+            list_2.Add(6);
+            list_2.Add(7);
+
+            list_1.AddRange(list_2);
+
+
+
+
             RealtouchBoard.Reload_SessionID();
             RealtouchBoard.Reload_OrganizerNO();
 
@@ -294,6 +311,13 @@ namespace RestaurantSys
             {
                 MessageBox.Show("There are " + Global.atProductInfo.Length.ToString() + " Product.");
             }
+
+
+
+
+            //List<string> Result = new List<string>();
+            //Result = RealtouchBoard.Get_CategoryID(Global.atCategoryInfoHierarchical.ToList());
+            //List<string> Result_1 = new List<string>();
 
         }
     }
